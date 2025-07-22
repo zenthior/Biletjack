@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BiletJack - Bilet Satış Platformu</title>
+    <link rel="stylesheet" href="css/sidebar.css">
     <style>
         * {
             margin: 0;
@@ -32,29 +33,60 @@
             max-width: 1200px;
             margin: 0 auto;
             display: flex;
-            justify-content: flex-start;
+            justify-content: space-between;
             align-items: center;
-            padding: 0 2rem;
-            gap: 2rem;
+            padding: 0 1rem;
+            gap: 1rem;
             position: relative;
         }
 
         .logo {
             flex-shrink: 0;
-            margin-right: 1rem;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo-image {
+            height: 40px;
+            width: auto;
+        }
+
+        /* Mobil Menü Butonu */
+        .mobile-menu-btn {
+            display: none;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Desktop Arama ve Hesap */
+        .desktop-nav {
+            display: flex;
+            align-items: center;
+            gap: 8rem;
+            flex: 1;
+            justify-content: center;
         }
 
         .header-search {
             display: flex;
-            gap: 2.1rem;
             align-items: center;
             max-width: 500px;
-            background: rgba(0, 0, 0, 0.9); /* Beyaz arka plan */
+            width: 100%;
+            background: rgba(0, 0, 0, 0.9);
             border-radius: 25px;
             padding: 0.4rem;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            margin: 0 auto;
-            margin-right: auto;
         }
 
         .search-field {
@@ -65,6 +97,7 @@
             border-radius: 15px;
             background: transparent;
             font-size: 0.9rem;
+            color: white;
             transition: background 0.3s;
         }
 
@@ -78,15 +111,8 @@
             font-size: 0.85rem;
         }
 
-        .search-divider {
-            width: 1px;
-            height: 25px;
-            background: #e0e0e0;
-            margin: 0 0.5rem;
-        }
-
         .header-search-btn {
-            background: #333; /* Koyu gri buton */
+            background: #333;
             color: white;
             border: none;
             padding: 0.6rem 1rem;
@@ -102,32 +128,12 @@
         }
 
         .header-search-btn:hover {
-            background: #555; /* Hover durumunda açık gri */
+            background: #555;
             transform: translateY(-1px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
-loads        .logo {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-        }
 
-        .logo-image {
-            height: 40px;
-            width: auto;
-        }
-
-        .sidebar-logo {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 10px;
-        }
-
-        .sidebar-logo-image {
-            height: 35px;
-            width: auto;
-        }
 
         .nav-links {
             display: flex;
@@ -258,120 +264,280 @@ loads        .logo {
             padding: 4rem 0;
         }
 
-        .section-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .section-title {
-            color: white;
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            font-weight: 700;
-        }
-
         .section-subtitle {
             color: rgba(255, 255, 255, 0.8);
             font-size: 1.1rem;
             margin: 0;
         }
 
+        /* Section Header Düzenlemesi */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-left {
+            text-align: left;
+        }
+
+        .section-title {
+            color: white;
+            font-size: 1.8rem;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .section-right {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Sorting Controls */
+        .sorting-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Dropdown Styles */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.7rem 1.2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dropdown-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .dropdown-arrow {
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            min-width: 160px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            margin-top: 0.5rem;
+        }
+
+        .dropdown.active .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: white;
+            padding: 0.8rem 1.2rem;
+            text-decoration: none;
+            display: block;
+            transition: background 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .dropdown-content a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown-content a:first-child {
+            border-radius: 15px 15px 0 0;
+        }
+
+        .dropdown-content a:last-child {
+            border-radius: 0 0 15px 15px;
+        }
+
+        /* View Controls */
+        .view-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .view-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.7rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .view-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .view-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Sıralama Butonları */
+        .sorting-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .sort-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .sort-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+        }
+
+        .sort-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Yeni Etkinlik Kartı Tasarımı */
         .events-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
             margin-top: 2rem;
         }
 
         .event-card {
-            background: white;
-            border-radius: 20px;
+            background: transparent;
+            border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: none;
+            box-shadow: none;
         }
 
         .event-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            transform: translateY(-5px);
         }
 
         .event-image {
-            height: 200px;
+            height: 280px;
+            border-radius: 15px;
+            background-size: cover !important;
+            background-position: center !important;
             position: relative;
             display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            padding: 1.5rem;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 1rem;
             color: white;
         }
 
         .event-category {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            padding: 0.5rem 1rem;
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            padding: 0.4rem 0.8rem;
             border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
+            font-size: 0.8rem;
+            font-weight: 500;
         }
 
         .event-location {
-            font-size: 0.9rem;
-            opacity: 0.9;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
         }
 
         .event-content {
-            padding: 1.5rem;
+            padding: 1rem 0.5rem;
+            text-align: left;
         }
 
         .event-title {
-            font-size: 1.4rem;
-            margin-bottom: 0.8rem;
-            color: #333;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: white;
             font-weight: 600;
             line-height: 1.3;
         }
 
-        .event-venue {
-            color: #666;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .event-date {
-            color: #666;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
+        .event-venue, .event-date {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 0.3rem;
+            font-size: 0.85rem;
         }
 
         .event-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-top: 0.8rem;
         }
 
         .event-price {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             font-weight: bold;
-            color: #667eea;
+            color: white;
         }
 
         .buy-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: rgba(255, 255, 255, 0.2);
             color: white;
             border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 25px;
-            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .buy-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            background: rgba(255, 255, 255, 0.3);
         }
 
         /* Newsletter Section */
@@ -539,6 +705,25 @@ loads        .logo {
             line-height: 1.6;
         }
 
+        /* Responsive */
+        @media (max-width: 768px) {
+            .section-header {
+                flex-direction: column;
+                gap: 1.5rem;
+                align-items: flex-start;
+            }
+            
+            .section-right {
+                width: 100%;
+                justify-content: flex-end;
+            }
+            
+            .sorting-controls {
+                flex-wrap: wrap;
+                gap: 0.8rem;
+            }
+        }
+
         @media (max-width: 768px) {
             .hero h1 {
                 font-size: 2.5rem;
@@ -666,16 +851,7 @@ loads        .logo {
             }
         }
 
-        /* Nav Styles - Hesap Butonu için */
-        .nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 2rem;
-            position: relative;
-        }
-
-        /* Account Button Styles - Sağa Alındı */
+        /* Account Button */
         .account-btn {
             background: rgba(10, 10, 10, 0.88);
             backdrop-filter: blur(10px);
@@ -690,7 +866,7 @@ loads        .logo {
             gap: 0.5rem;
             font-weight: 500;
             font-size: 0.9rem;
-            margin-left: auto;
+            white-space: nowrap;
         }
 
         .account-btn:hover {
@@ -720,10 +896,9 @@ loads        .logo {
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.28);
+            background-color: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(10px);
             cursor: pointer;
-            /* Animasyon kaldırıldı - direkt blur */
         }
 
         .sidebar-content {
@@ -739,6 +914,7 @@ loads        .logo {
             color: white;
             transform: translateX(100%);
             transition: transform 0.3s ease;
+            overflow-y: auto;
         }
 
         .sidebar.active .sidebar-content {
@@ -782,6 +958,17 @@ loads        .logo {
             flex: 1;
             padding: 1rem;
             overflow-y: auto;
+        }
+
+        /* Mobil Arama (Sidebar İçinde) */
+        .mobile-search {
+            display: none;
+            margin-bottom: 2rem;
+        }
+
+        .mobile-search .header-search {
+            max-width: 100%;
+            margin: 0;
         }
 
         .account-options {
@@ -853,6 +1040,7 @@ loads        .logo {
 
         /* Papilet Tarzı Butonlar */
         .account-option-btn {
+            text-decoration: none;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 8px;
@@ -905,6 +1093,7 @@ loads        .logo {
             opacity: 0.6;
             transition: all 0.2s ease;
             color: #E91E63;
+            display: none;
         }
 
         .account-option-btn:hover .option-arrow {
@@ -977,33 +1166,106 @@ loads        .logo {
             opacity: 0.7;
         }
 
+        .menu-section h3 {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+            padding: 0 1.2rem;
+        }
+
+        .menu-item-content {
+            flex: 1;
+        }
+
+        .menu-item-content span {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        .menu-item-arrow {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 1.2rem;
+            transition: all 0.2s ease;
+        }
+
+        .menu-item:hover .menu-item-arrow {
+            color: rgba(255, 255, 255, 0.8);
+            transform: translateX(3px);
+        }
+
+        .menu-item:hover .menu-item-content span {
+            color: white;
+        }
+
         /* Mobile Responsive */
         @media (max-width: 768px) {
-            .nav {
-                flex-wrap: wrap;
-                gap: 1rem;
+            .mobile-menu-btn {
+                display: block;
             }
             
+            .desktop-nav {
+                display: none;
+            }
+            
+            /* Mobilde hesap butonunu gizle */
             .account-btn {
-                margin-left: 1rem;
+                display: none;
+            }
+            
+            .nav {
+                padding: 0 1rem;
+                justify-content: space-between; /* Logo sol, menü sağ */
+            }
+            
+            .logo {
+                order: 1; /* Logo sola */
+            }
+            
+            .mobile-menu-btn {
+                order: 2; /* Menü butonu sağa */
+                margin-left: auto;
+            }
+            
+            .logo-image {
+                height: 35px;
             }
             
             .sidebar-content {
                 width: 100%;
-                max-width: 320px;
+                max-width: 350px;
+            }
+            
+            .mobile-search {
+                display: block;
             }
         }
 
         @media (max-width: 480px) {
-            .account-btn {
-                margin-left: 0;
-                margin-top: 1rem;
-                width: 100%;
-                justify-content: center;
+            .nav {
+                padding: 0 0.5rem;
+                justify-content: space-between;
+            }
+            
+            .logo-image {
+                height: 32px;
+                margin-bottom: -65px;
+                margin-left: -185px;
             }
             
             .sidebar-content {
                 width: 100%;
+                max-width: 100%;
+            }
+            
+            .sidebar-header {
+                padding: 1.5rem 1rem;
+            }
+            
+            .sidebar-body {
+                padding: 1rem;
             }
         }
 
@@ -1181,6 +1443,332 @@ loads        .logo {
             font-weight: 500;
         }
 
+                /* Jack+ Square Button Styles */
+        .jackplus-square-btn {
+            display: block;
+            background: linear-gradient(135deg, #8E2DE2, #4A00E0);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .jackplus-square-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(142, 45, 226, 0.3);
+        }
+        
+        .jackplus-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .jackplus-icon {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-bottom: 0.5rem;
+        }
+        
+        .jackplus-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 0;
+            color: white;
+        }
+        
+        .jackplus-subtitle {
+            font-size: 0.9rem;
+            margin: 0;
+            opacity: 0.9;
+            color: white;
+        }
+        
+        /* Jack+ Page Styles */
+        .jackplus-hero {
+            background: linear-gradient(135deg, #8E2DE2, #4A00E0);
+            padding: 6rem 0;
+            text-align: center;
+            color: white;
+        }
+        
+        .jackplus-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .plus-symbol {
+            font-weight: 900;
+            font-size: 3.8rem;
+        }
+        
+        .jackplus-subtitle {
+            font-size: 1.5rem;
+            opacity: 0.9;
+        }
+        
+        .jackplus-features {
+            padding: 5rem 0;
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+        
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+        }
+        
+        .jackplus-pricing {
+            padding: 5rem 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 3rem;
+            color: white;
+        }
+        
+        .pricing-cards {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .pricing-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2.5rem 2rem;
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+        
+        .pricing-card.featured {
+            background: rgba(142, 45, 226, 0.15);
+            border-color: rgba(142, 45, 226, 0.3);
+            transform: scale(1.05);
+        }
+        
+        .pricing-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #8E2DE2, #4A00E0);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .pricing-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+        
+        .pricing-price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 2rem;
+        }
+        
+        .pricing-price span {
+            font-size: 1rem;
+            font-weight: 400;
+            opacity: 0.7;
+        }
+        
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+        
+        .pricing-features li {
+            padding: 0.8rem 0;
+            color: rgba(255, 255, 255, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .pricing-btn {
+            background: linear-gradient(135deg, #8E2DE2, #4A00E0);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .pricing-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(142, 45, 226, 0.3);
+        }
+        
+        .jackplus-testimonials {
+            padding: 5rem 0;
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        .testimonial-slider {
+            display: flex;
+            gap: 2rem;
+            overflow-x: auto;
+            padding: 1rem 0;
+            scrollbar-width: none;
+        }
+        
+        .testimonial-slider::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .testimonial {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            min-width: 300px;
+            flex: 1;
+        }
+        
+        .testimonial-content {
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .testimonial-author {
+            font-weight: 600;
+            color: white;
+        }
+        
+        .jackplus-cta {
+            padding: 5rem 0;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(142, 45, 226, 0.2), rgba(74, 0, 224, 0.2));
+        }
+        
+        .jackplus-cta h2 {
+            font-size: 2rem;
+            color: white;
+            margin-bottom: 1rem;
+        }
+        
+        .jackplus-cta p {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+        
+        .cta-btn {
+            background: linear-gradient(135deg, #8E2DE2, #4A00E0);
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(142, 45, 226, 0.3);
+        }
+        
+        /* Mobile Responsive for Jack+ */
+        @media (max-width: 768px) {
+            .feature-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .pricing-cards {
+                flex-direction: column;
+            }
+            
+            .pricing-card.featured {
+                transform: scale(1);
+                margin: 2rem 0;
+            }
+            
+            .jackplus-title {
+                font-size: 2.5rem;
+            }
+            
+            .plus-symbol {
+                font-size: 2.8rem;
+            }
+            
+            .jackplus-subtitle {
+                font-size: 1.2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .testimonial {
+                min-width: 260px;
+            }
+        }
+
         /* Mobile Responsive */
         @media (max-width: 768px) {
             .hero-slider {
@@ -1256,23 +1844,32 @@ loads        .logo {
                 <img src="./uploads/logo.png" alt="BiletJack Logo" class="logo-image">
             </a>
             
-            <form class="header-search" method="POST" action="search.php">
-                <input type="text" name="keyword" class="search-field" placeholder="Sanatçı, mekan, etkinlik ara...">
+            <!-- Desktop Navigation -->
+            <div class="desktop-nav">
+                <form class="header-search" method="POST" action="search.php">
+                    <input type="text" name="keyword" class="search-field" placeholder="Sanatçı, mekan, etkinlik ara...">
+                    <button type="submit" class="header-search-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                        </svg>
+                        Ara
+                    </button>
+                </form>
                 
-                <button type="submit" class="header-search-btn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                <!-- Desktop Account Button (sadece desktop'ta görünür) -->
+                <button class="account-btn" onclick="openAccountSidebar()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
                     </svg>
-                    Ara
+                    Hesap
                 </button>
-            </form>
+            </div>
             
-            <!-- Hesap Butonu - Sağa Alındı -->
-            <button class="account-btn" onclick="openAccountSidebar()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            <!-- Mobile Menu Button (sadece mobilde görünür) -->
+            <button class="mobile-menu-btn" onclick="openAccountSidebar()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
                 </svg>
-                Hesap
             </button>
         </nav>
     </header>
@@ -1282,9 +1879,7 @@ loads        .logo {
         <div class="sidebar-overlay" onclick="closeAccountSidebar()"></div>
         <div class="sidebar-content">
             <div class="sidebar-header">
-                <div class="sidebar-logo">
-                    <img src="./uploads/logo.png" alt="BiletJack Logo" class="sidebar-logo-image">
-                </div>
+                <h2>Hesap</h2>
                 <button class="sidebar-close" onclick="closeAccountSidebar()">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
@@ -1292,6 +1887,18 @@ loads        .logo {
                 </button>
             </div>
             <div class="sidebar-body">
+                <!-- Mobile Search (sadece mobilde görünür) -->
+                <div class="mobile-search">
+                    <form class="header-search" method="POST" action="search.php">
+                        <input type="text" name="keyword" class="search-field" placeholder="Sanatçı, mekan, etkinlik ara...">
+                        <button type="submit" class="header-search-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                            </svg>
+                            Ara
+                        </button>
+                    </form>
+                </div>
                 <div class="account-options">
                     <button class="account-option-btn" onclick="showLoginForm()">
                         <div class="option-icon"></div>
@@ -1299,7 +1906,7 @@ loads        .logo {
                             <h3>Giriş Yap</h3>
                             <p>Mevcut hesabınızla giriş yapın</p>
                         </div>
-                        <div class="option-arrow">→</div>
+                        <div class="option-arrow"></div>
                     </button>
                     
                     <button class="account-option-btn" onclick="showRegisterForm()">
@@ -1308,7 +1915,7 @@ loads        .logo {
                             <h3>Kayıt Ol</h3>
                             <p>Yeni hesap oluşturun</p>
                         </div>
-                        <div class="option-arrow">→</div>
+                        <div class="option-arrow"></div>
                     </button>
                     
                     <button class="account-option-btn" onclick="showOrganizerForm()">
@@ -1317,8 +1924,35 @@ loads        .logo {
                             <h3>Organizatör Kaydı</h3>
                             <p>Etkinlik düzenleyicisi olarak kayıt olun</p>
                         </div>
-                        <div class="option-arrow">→</div>
+                        <div class="option-arrow"></div>
                     </button>
+                    
+                    <!-- Menü bölümü -->
+                    <div class="menu-section">
+                        <h3>Sayfalar</h3>
+                        <a href="hakkimizda.php" class="menu-item">
+                            <div class="menu-item-content">
+                                <span>Hakkımızda</span>
+                            </div>
+                        </a>
+                        
+                        <a href="iletisim.php" class="menu-item">
+                            <div class="menu-item-content">
+                                <span>İletişim</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- JackPlus Kare Buton - En Alta -->
+                <div class="jack-buttons-container">
+                    <a href="jackplus.php" class="jack-btn jackplus">
+                        <div class="jack-btn-icon">+</div>
+                        <div class="jack-btn-text">Jack<span class="highlight">+</span></div>
+                    </a>
+                    
+                    <a href="jackpoint.php" class="jack-btn jackpoint">
+                    </a>
                 </div>
                 
                 <!-- Sosyal Medya Bağlantıları -->

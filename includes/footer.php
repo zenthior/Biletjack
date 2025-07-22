@@ -56,7 +56,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 BiletJack. Tüm hakları saklıdır. | Güvenli ödeme sistemi ile biletinizi hemen alın!</p>
+            <p>&copy; 2025 BiletJack. Tüm hakları saklıdır. | Güvenli ödeme sistemi ile biletinizi hemen alın!</p>
             <div class="payment-methods">
                 <img src="https://via.placeholder.com/40x25" alt="Visa">
                 <img src="https://via.placeholder.com/40x25" alt="Mastercard">

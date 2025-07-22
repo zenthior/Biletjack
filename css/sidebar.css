@@ -1,0 +1,364 @@
+/* Sidebar Menü Stilleri */
+.menu-section {
+    margin: 2rem 0;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.menu-section h3 {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    text-decoration: none;
+    color: white;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.menu-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateX(5px);
+    text-decoration: none;
+}
+
+.menu-item:focus,
+.menu-item:active,
+.menu-item:visited {
+    text-decoration: none;
+    color: white;
+}
+
+.menu-item-icon {
+    font-size: 1.2rem;
+    margin-right: 1rem;
+    width: 24px;
+    text-align: center;
+}
+
+.menu-item-content {
+    flex: 1;
+}
+
+.menu-item-content span {
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+/* Jack Butonları Konteyner */
+.jack-buttons-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.2rem;
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Küçük Jack Butonları */
+.jack-btn {
+    display: block;
+    padding: 0.8rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    text-decoration: none;
+    color: white;
+    text-align: center;
+    transition: all 0.3s ease;
+    min-height: 70px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 1;
+}
+
+.jack-btn.jackplus {
+    background-image: url('../uploads/jack+.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-color: transparent;
+    border-radius: 10px;
+    overflow: hidden;
+    width: 100%;
+    aspect-ratio: 1;
+    min-height: 70px;
+}
+
+.jack-btn.jackplus .jack-btn-text {
+    position: relative;
+    z-index: 2;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    backdrop-filter: blur(5px);
+    margin-top: auto;
+    font-size: 0.8rem;
+}
+
+.jack-btn:hover {
+    transform: translateY(-3px);
+    text-decoration: none;
+    color: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.jack-btn:focus,
+.jack-btn:active,
+.jack-btn:visited {
+    text-decoration: none;
+    color: white;
+}
+
+.jack-btn.jackplus {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: transparent;
+    background-image: url('../uploads/jack+.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-color: transparent;
+    border-radius: 12px;
+    overflow: hidden;
+    width: 100%;
+    aspect-ratio: 1;
+    min-height: 100px;
+}
+
+.jack-btn.jackplus::before {
+    display: none;
+}
+
+.jack-btn.jackplus .jack-btn-icon {
+    display: none;
+}
+
+.jack-btn.jackplus .jack-btn-text {
+    position: relative;
+    z-index: 2;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 0.3rem 0.8rem;
+    border-radius: 8px;
+    backdrop-filter: blur(5px);
+    margin-top: auto;
+}
+
+.jack-btn.jackplus:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transform: translateY(-3px);
+}
+
+.jack-btn.jackpoint {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    border-color: transparent;
+}
+
+.jack-btn.jackpoint:hover {
+    box-shadow: 0 5px 15px rgba(67, 233, 123, 0.4);
+}
+
+.jack-btn-icon {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+}
+
+.jack-btn-text {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.jack-btn-text .highlight {
+    color: #FFD700;
+}
+
+/* JackPlus Kare Buton Stilleri */
+.jackplus-square-btn {
+    display: block;
+    width: 100%;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 15px;
+    text-decoration: none;
+    color: white;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.jackplus-square-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    text-decoration: none;
+    color: white;
+}
+
+.jackplus-square-btn:focus,
+.jackplus-square-btn:active,
+.jackplus-square-btn:visited {
+    text-decoration: none;
+    color: white;
+}
+
+.jackplus-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.jackplus-icon {
+    font-size: 2rem;
+    font-weight: bold;
+    background: rgba(255, 255, 255, 0.2);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+.jackplus-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.jackplus-subtitle {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin: 0;
+}
+.jack-btn.jackpoint {
+    background-image: url('../uploads/jackpoint.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-color: transparent;
+    border-radius: 10px;
+    overflow: hidden;
+    width: 100%;
+    aspect-ratio: 1;
+    min-height: 70px;
+}
+
+.jack-btn.jackpoint::before {
+    display: none;
+}
+
+.jack-btn.jackpoint .jack-btn-icon {
+    display: none;
+}
+
+.jack-btn.jackpoint .jack-btn-text {
+    position: relative;
+    z-index: 2;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    backdrop-filter: blur(5px);
+    margin-top: auto;
+    font-size: 0.8rem;
+}
+
+.jack-btn.jackpoint:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transform: translateY(-3px);
+}
+
+.jack-btn-icon {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+}
+
+.jack-btn-text {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.jack-btn-text .highlight {
+    color: #FFD700;
+}
+
+/* JackPlus Kare Buton Stilleri */
+.jackplus-square-btn {
+    display: block;
+    width: 100%;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 15px;
+    text-decoration: none;
+    color: white;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.jackplus-square-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    text-decoration: none;
+    color: white;
+}
+
+.jackplus-square-btn:focus,
+.jackplus-square-btn:active,
+.jackplus-square-btn:visited {
+    text-decoration: none;
+    color: white;
+}
+
+.jackplus-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.jackplus-icon {
+    font-size: 2rem;
+    font-weight: bold;
+    background: rgba(255, 255, 255, 0.2);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+.jackplus-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.jackplus-subtitle {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin: 0;
+}

@@ -78,10 +78,25 @@
         <section class="popular-events">
             <div class="container">
                 <div class="section-header">
-                    <h2 class="section-title">Öne Çıkan Etkinlikler</h2>
-                    <p class="section-subtitle">Bu hafta en çok ilgi gören etkinlikler</p>
+                    <div class="section-left">
+                        <h2 class="section-title">Tüm Etkinlikler</h2>
+                    </div>
+                    
+                    <!-- Sıralama Butonları -->
+                    <div class="section-right">
+                        <div class="sorting-controls">
+                            <div class="dropdown">
+                                <button class="dropdown-btn">Sırala <span class="dropdown-arrow">▼</span></button>
+                                <div class="dropdown-content">
+                                    <a href="#" data-sort="all">Tümü</a>
+                                    <a href="#" data-sort="date">Tarihe Göre</a>
+                                    <a href="#" data-sort="price">Fiyata Göre</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="events-grid">
+                <div class="events-grid view-4">
                     <?php
                     // Örnek etkinlik verileri
                     $events = [
@@ -141,11 +156,20 @@
                         ]
                     ];
 
-                    foreach ($events as $event) {
-                        echo '<div class="event-card">';
-                        echo '<div class="event-image" style="background: ' . $event['image_bg'] . '">';
-                        echo '<div class="event-category">' . $event['category'] . '</div>';
-                        echo '<div class="event-location">📍 ' . $event['location'] . '</div>';
+                    foreach ($events as $index => $event) {
+                        $eventParams = http_build_query([
+                            'title' => $event['title'],
+                            'date' => $event['date'],
+                            'venue' => $event['venue'],
+                            'location' => $event['location'],
+                            'price' => $event['price'],
+                            'category' => $event['category'],
+                            'imageBg' => $event['image_bg']
+                        ]);
+                        
+                        echo '<div class="event-card" onclick="window.location.href=\'etkinlik-detay.php?' . $eventParams . '\'" style="cursor: pointer;">';
+                        echo '<div class="event-image" style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), ' . $event['image_bg'] . '">';
+                        echo '<div class="event-location">' . $event['location'] . '</div>';
                         echo '</div>';
                         echo '<div class="event-content">';
                         echo '<h3 class="event-title">' . $event['title'] . '</h3>';
@@ -153,7 +177,6 @@
                         echo '<p class="event-date">📅 ' . $event['date'] . '</p>';
                         echo '<div class="event-footer">';
                         echo '<span class="event-price">' . $event['price'] . '</span>';
-                        echo '<button class="buy-btn">Bilet Al</button>';
                         echo '</div>';
                         echo '</div>';
                         echo '</div>';
