@@ -1,4 +1,37 @@
-<?php include 'includes/header.php'; ?>
+<?php 
+require_once 'includes/session.php';
+require_once 'config/database.php';
+
+// Panel'den gelenleri yönlendirme
+if (!isset($_GET['from_panel']) && isLoggedIn()) {
+    // redirectToDashboard(); // Bu satırı yoruma alın
+}
+// Remember me kontrolü
+if (isset($_COOKIE['remember_token']) && !isLoggedIn()) {
+    $database = new Database();
+    $pdo = $database->getConnection();
+    
+    $stmt = $pdo->prepare("SELECT u.* FROM users u WHERE u.remember_token = ? AND u.status = 'active'");
+    $stmt->execute([$_COOKIE['remember_token']]);
+    $user = $stmt->fetch();
+    
+    if ($user) {
+        startUserSession($user);
+        // redirectToDashboard(); // Bu satırı da kaldırın
+        // exit();
+    }
+}
+
+// Hata/başarı mesajlarını göster
+if (isset($_GET['error'])) {
+    echo '<div class="alert alert-error">' . htmlspecialchars($_GET['error']) . '</div>';
+}
+if (isset($_GET['success'])) {
+    echo '<div class="alert alert-success">' . htmlspecialchars($_GET['success']) . '</div>';
+}
+
+include 'includes/header.php'; 
+?>
 
     <main>
         <!-- Hero Slider Section -->
@@ -25,12 +58,6 @@
                         <button class="slide-btn">Bilet Al</button>
                     </div>
                 </div>
-                
-                <!-- Slider Navigation kısmını tamamen kaldırın (30-33. satırlar) -->
-                <!-- <div class="slider-nav">
-                    <button class="nav-btn prev" onclick="changeSlide(-1)">❮</button>
-                    <button class="nav-btn next" onclick="changeSlide(1)">❯</button>
-                </div> -->
                 
                 <!-- Slider Dots -->
                 <div class="slider-dots">

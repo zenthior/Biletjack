@@ -1,3 +1,17 @@
+<?php
+// Session kontrolü ekle
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Session fonksiyonlarını dahil et
+require_once __DIR__ . '/session.php';
+
+// Kullanıcı giriş durumunu kontrol et
+$isLoggedIn = isLoggedIn();
+$currentUser = $isLoggedIn ? getCurrentUser() : null;
+$userType = $isLoggedIn ? $_SESSION['user_type'] : null;
+?>
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -907,7 +921,7 @@
             right: 0;
             width: 350px;
             height: 100%;
-            background: linear-gradient(180deg,rgba(255, 255, 255, 0.87) 0%,rgba(24, 23, 23, 0.6) 50%,rgba(0, 0, 0, 0.61) 100%);
+            background: linear-gradient(180deg,rgba(255, 255, 255, 0.71) 0%,rgba(24, 23, 23, 0.6) 50%,rgba(0, 0, 0, 0.61) 100%);
             box-shadow: -10px 0 30px rgba(0, 0, 0, 0.3);
             display: flex;
             flex-direction: column;
@@ -929,6 +943,18 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar-logo-img {
+            height: 35px;
+            width: auto;
+            max-width: 160px;
+            object-fit: contain;
+        }
+
         .sidebar-header h2 {
             margin: 0;
             font-size: 1.3rem;
@@ -936,23 +962,6 @@
             color: white;
         }
 
-        .sidebar-close {
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            color: white;
-            width: 35px;
-            height: 35px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .sidebar-close:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
 
         .sidebar-body {
             flex: 1;
@@ -975,6 +984,54 @@
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
+        }
+        
+        /* Özel Giriş Yap Kartı */
+        .login-card {
+            background: linear-gradient(135deg,rgb(145, 148, 160) 0%,rgb(29, 20, 39) 100%);
+            border-radius: 12px;
+            padding: 0.5rem;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            border: 0px solid rgba(255, 255, 255, 0);
+        }
+
+        .login-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(184, 185, 189, 0.4);
+        }
+
+        .login-card-content {
+            text-align: center;
+        }
+
+        .login-card-content h3 {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0 0 1rem 0;
+            line-height: 1.3;
+        }
+
+        .login-card-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .login-card-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: scale(1.05);
         }
         
         /* Sosyal Medya Bağlantıları */
@@ -1038,6 +1095,27 @@
             background: #000;
         }
 
+        /* User Welcome Styles */
+        .user-welcome {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .user-welcome h3 {
+            color: white;
+            margin: 0 0 0.5rem 0;
+            font-size: 1.1rem;
+        }
+
+        .user-type {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
         /* Papilet Tarzı Butonlar */
         .account-option-btn {
             text-decoration: none;
@@ -1058,6 +1136,15 @@
         .account-option-btn:hover {
             background: rgba(255, 255, 255, 0.1);
             border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .logout-option {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+
+        .logout-option:hover {
+            background: rgba(220, 53, 69, 0.2);
         }
 
         .option-icon {
@@ -1442,88 +1529,6 @@
             font-size: 0.9rem;
             font-weight: 500;
         }
-
-                /* Jack+ Square Button Styles */
-        .jackplus-square-btn {
-            display: block;
-            background: linear-gradient(135deg, #8E2DE2, #4A00E0);
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin: 1rem 0;
-            text-decoration: none;
-            color: white;
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-        
-        .jackplus-square-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(142, 45, 226, 0.3);
-        }
-        
-        .jackplus-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .jackplus-icon {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            font-size: 24px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-bottom: 0.5rem;
-        }
-        
-        .jackplus-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin: 0;
-            color: white;
-        }
-        
-        .jackplus-subtitle {
-            font-size: 0.9rem;
-            margin: 0;
-            opacity: 0.9;
-            color: white;
-        }
-        
-        /* Jack+ Page Styles */
-        .jackplus-hero {
-            background: linear-gradient(135deg, #8E2DE2, #4A00E0);
-            padding: 6rem 0;
-            text-align: center;
-            color: white;
-        }
-        
-        .jackplus-title {
-            font-size: 3.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-        
-        .plus-symbol {
-            font-weight: 900;
-            font-size: 3.8rem;
-        }
-        
-        .jackplus-subtitle {
-            font-size: 1.5rem;
-            opacity: 0.9;
-        }
-        
-        .jackplus-features {
-            padding: 5rem 0;
-            background: rgba(255, 255, 255, 0.02);
-        }
         
         .feature-grid {
             display: grid;
@@ -1562,9 +1567,6 @@
             line-height: 1.6;
         }
         
-        .jackplus-pricing {
-            padding: 5rem 0;
-        }
         
         .section-title {
             text-align: center;
@@ -1657,10 +1659,6 @@
             box-shadow: 0 10px 20px rgba(142, 45, 226, 0.3);
         }
         
-        .jackplus-testimonials {
-            padding: 5rem 0;
-            background: rgba(255, 255, 255, 0.02);
-        }
         
         .testimonial-slider {
             display: flex;
@@ -1696,23 +1694,6 @@
             color: white;
         }
         
-        .jackplus-cta {
-            padding: 5rem 0;
-            text-align: center;
-            background: linear-gradient(135deg, rgba(142, 45, 226, 0.2), rgba(74, 0, 224, 0.2));
-        }
-        
-        .jackplus-cta h2 {
-            font-size: 2rem;
-            color: white;
-            margin-bottom: 1rem;
-        }
-        
-        .jackplus-cta p {
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 2rem;
-            font-size: 1.1rem;
-        }
         
         .cta-btn {
             background: linear-gradient(135deg, #8E2DE2, #4A00E0);
@@ -1746,17 +1727,6 @@
                 margin: 2rem 0;
             }
             
-            .jackplus-title {
-                font-size: 2.5rem;
-            }
-            
-            .plus-symbol {
-                font-size: 2.8rem;
-            }
-            
-            .jackplus-subtitle {
-                font-size: 1.2rem;
-            }
         }
         
         @media (max-width: 480px) {
@@ -1766,6 +1736,274 @@
             
             .testimonial {
                 min-width: 260px;
+            }
+        }
+
+        /* Modal Stilleri */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: relative;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 240, 240, 0.9) 100%);
+            border-radius: 15px;
+            width: 90%;
+            max-width: 450px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem 1rem 2rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .modal-close {
+            background: rgba(0, 0, 0, 0.1);
+            border: none;
+            color: #666;
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: rgba(0, 0, 0, 0.2);
+            color: #333;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row .form-group {
+            margin-bottom: 0;
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            display: none;
+        }
+
+        .checkmark {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            margin-right: 0.5rem;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .checkbox-label input[type="checkbox"]:checked + .checkmark {
+            background: #667eea;
+            border-color: #667eea;
+        }
+
+        .checkbox-label input[type="checkbox"]:checked + .checkmark::after {
+            content: '✓';
+            position: absolute;
+            top: -2px;
+            left: 2px;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .forgot-password, .terms-link {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s ease;
+        }
+
+        .forgot-password:hover, .terms-link:hover {
+            color: #5a6fd8;
+            text-decoration: underline;
+        }
+
+        .modal-btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .modal-btn.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .modal-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .modal-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-footer p {
+            margin: 0 0 0.5rem 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .modal-footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .modal-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .message {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .message.warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .message.info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        /* Animasyonlar */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
             }
         }
 
@@ -1813,6 +2051,24 @@
             .category-btn span {
                 font-size: 0.8rem;
             }
+            
+            .modal-content {
+                width: 95%;
+                margin: 1rem;
+            }
+            
+            .modal-body {
+                padding: 1.5rem;
+            }
+            
+            .form-options {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1846,8 +2102,8 @@
             
             <!-- Desktop Navigation -->
             <div class="desktop-nav">
-                <form class="header-search" method="POST" action="search.php">
-                    <input type="text" name="keyword" class="search-field" placeholder="Sanatçı, mekan, etkinlik ara...">
+                <form class="header-search" method="GET" action="etkinlikler.php">
+                    <input type="text" name="search" class="search-field" placeholder="Sanatçı, mekan, etkinlik ara...">
                     <button type="submit" class="header-search-btn">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
@@ -1879,18 +2135,15 @@
         <div class="sidebar-overlay" onclick="closeAccountSidebar()"></div>
         <div class="sidebar-content">
             <div class="sidebar-header">
-                <h2>Hesap</h2>
-                <button class="sidebar-close" onclick="closeAccountSidebar()">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-                    </svg>
-                </button>
+                <div class="sidebar-logo">
+                    <img src="uploads/logo.png" alt="BiletJack" class="sidebar-logo-img">
+                </div>
             </div>
             <div class="sidebar-body">
                 <!-- Mobile Search (sadece mobilde görünür) -->
                 <div class="mobile-search">
-                    <form class="header-search" method="POST" action="search.php">
-                        <input type="text" name="keyword" class="search-field" placeholder="Sanatçı, mekan, etkinlik ara...">
+                    <form class="header-search" method="GET" action="etkinlikler.php">
+                        <input type="text" name="search" class="search-field" placeholder="Sanatçı, mekan, etkinlik ara...">
                         <button type="submit" class="header-search-btn">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
@@ -1900,58 +2153,115 @@
                     </form>
                 </div>
                 <div class="account-options">
-                    <button class="account-option-btn" onclick="showLoginForm()">
-                        <div class="option-icon"></div>
-                        <div class="option-content">
-                            <h3>Giriş Yap</h3>
-                            <p>Mevcut hesabınızla giriş yapın</p>
+                    <?php if ($isLoggedIn): ?>
+                        <!-- Giriş yapmış kullanıcı menüsü -->
+                        <div class="user-welcome">
+                            <h3>Hoş geldiniz, <?php echo htmlspecialchars($currentUser['first_name']); ?>!</h3>
+                            <p class="user-type"><?php 
+                                switch($userType) {
+                                    case 'admin': echo 'Yönetici'; break;
+                                    case 'organizer': echo 'Organizatör'; break;
+                                    case 'customer': echo 'Müşteri'; break;
+                                    default: echo 'Kullanıcı';
+                                }
+                            ?></p>
                         </div>
-                        <div class="option-arrow"></div>
-                    </button>
-                    
-                    <button class="account-option-btn" onclick="showRegisterForm()">
-                        <div class="option-icon"></div>
-                        <div class="option-content">
-                            <h3>Kayıt Ol</h3>
-                            <p>Yeni hesap oluşturun</p>
-                        </div>
-                        <div class="option-arrow"></div>
-                    </button>
-                    
-                    <button class="account-option-btn" onclick="showOrganizerForm()">
-                        <div class="option-icon"></div>
-                        <div class="option-content">
-                            <h3>Organizatör Kaydı</h3>
-                            <p>Etkinlik düzenleyicisi olarak kayıt olun</p>
-                        </div>
-                        <div class="option-arrow"></div>
-                    </button>
-                    
-                    <!-- Menü bölümü -->
-                    <div class="menu-section">
-                        <h3>Sayfalar</h3>
-                        <a href="hakkimizda.php" class="menu-item">
-                            <div class="menu-item-content">
-                                <span>Hakkımızda</span>
+                        
+                        <?php if ($userType === 'admin'): ?>
+                            <a href="admin/index.php" class="account-option-btn">
+                                <div class="option-content">
+                                    <h3>Admin Paneli</h3>
+                                </div>
+                                <div class="option-arrow"></div>
+                            </a>
+                        <?php elseif ($userType === 'organizer'): ?>
+                            <?php if (isOrganizerApproved()): ?>
+                                <a href="organizer/index.php" class="account-option-btn">
+                                    <div class="option-content">
+                                        <h3>Organizatör Paneli</h3>
+                                    </div>
+                                    <div class="option-arrow"></div>
+                                </a>
+                            <?php else: ?>
+                                <a href="organizer/pending.php" class="account-option-btn">
+                                    <div class="option-content">
+                                        <h3>Başvuru Durumu</h3>
+                                    </div>
+                                    <div class="option-arrow"></div>
+                                </a>
+                            <?php endif; ?>
+                        <?php elseif ($userType === 'customer'): ?>
+                            <a href="customer/index.php" class="account-option-btn">
+                                <div class="option-content">
+                                    <h3>Müşteri Paneli</h3>
+                                </div>
+                                <div class="option-arrow"></div>
+                            </a>
+                            <a href="customer/tickets.php" class="account-option-btn">
+                                <div class="option-content">
+                                    <h3>Biletlerim</h3>
+                                </div>
+                                <div class="option-arrow"></div>
+                            </a>
+                            <a href="customer/profile.php" class="account-option-btn">
+                                <div class="option-content">
+                                    <h3>Profilim</h3>
+                                </div>
+                                <div class="option-arrow"></div>
+                            </a>
+                        <?php endif; ?>
+                        
+                        <!-- Ortak menü öğeleri -->
+                        <a href="etkinlikler.php" class="account-option-btn">
+                            <div class="option-content">
+                                <h3>Etkinlikler</h3>
                             </div>
+                            <div class="option-arrow"></div>
                         </a>
                         
-                        <a href="iletisim.php" class="menu-item">
-                            <div class="menu-item-content">
-                                <span>İletişim</span>
+                        <a href="auth/logout.php" class="account-option-btn logout-option">
+                            <div class="option-content">
+                                <h3>Çıkış Yap</h3>
                             </div>
+                            <div class="option-arrow"></div>
                         </a>
-                    </div>
-                </div>
-                
-                <!-- JackPlus Kare Buton - En Alta -->
-                <div class="jack-buttons-container">
-                    <a href="jackplus.php" class="jack-btn jackplus">
-                        <div class="jack-btn-icon">+</div>
-                        <div class="jack-btn-text">Jack<span class="highlight">+</span></div>
+                        
+                    <?php else: ?>
+                        <!-- Giriş yapmamış kullanıcı menüsü -->
+                        <div class="login-card" onclick="showLoginForm()">
+                            <div class="login-card-content">
+                                <h3>Hesabınıza giriş yapın</h3>
+                                <button class="login-card-btn">Giriş Yap</button>
+                            </div>
+                        </div>
+                        
+                        <a href="organizator.php" class="account-option-btn">
+                            <div class="option-content">
+                            <h3>Organizatör Kaydı</h3>
+                            </div>
+                            <div class="option-arrow"></div>
+                        </a>
+                    <?php endif; ?>
+
+                    <a href="jackpoint.php" class="account-option-btn">
+                        <div class="option-content">
+                        <h3>JackPoint</h3>
+                        </div>
+                        <div class="option-arrow"></div>
                     </a>
-                    
-                    <a href="jackpoint.php" class="jack-btn jackpoint">
+
+                    <a href="hakkimizda.php" class="account-option-btn">
+                        <div class="option-content">
+                        <h3>Hakkımızda</h3>
+                        </div>
+                        <div class="option-arrow"></div>
+                    </a>
+
+                    <a href="iletisim.php" class="account-option-btn">
+                        <div class="option-content">
+                        <h3>İletişim</h3>
+                        </div>
+                        <div class="option-arrow"></div>
                     </a>
                 </div>
                 
@@ -1979,7 +2289,109 @@
             </div>
         </div>
     </div>
+
+    <!-- Login Modal - Güncellenmiş form -->
+    <div id="loginModal" class="modal">
+        <div class="modal-overlay" onclick="closeModal('loginModal')"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Giriş Yap</h2>
+                <button class="modal-close" onclick="closeModal('loginModal')">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="loginMessage" class="message" style="display: none;"></div>
+                <form id="loginForm" class="login-form">
+                    <div class="form-group">
+                        <label for="login_email">E-posta</label>
+                        <input type="email" id="login_email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login_password">Şifre</label>
+                        <input type="password" id="login_password" name="password" required>
+                    </div>
+                    <div class="form-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="remember">
+                            <span class="checkmark"></span>
+                            Beni hatırla
+                        </label>
+                        <a href="#" class="forgot-password">Şifremi unuttum</a>
+                    </div>
+                    <button type="submit" class="modal-btn primary">Giriş Yap</button>
+                </form>
+                <div class="modal-footer">
+                <p>Hesabınız yok mu? <a href="#" onclick="switchToRegister()">Kayıt ol</a></p>
+                <p>Organizatör müsünüz? <a href="organizator.php">Organizatör Kaydı</a></p>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal - Güncellenmiş form -->
+    <div id="registerModal" class="modal">
+        <div class="modal-overlay" onclick="closeModal('registerModal')"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Müşteri Kayıt</h2>
+                <button class="modal-close" onclick="closeModal('registerModal')">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="registerMessage" class="message" style="display: none;"></div>
+                <form id="registerForm" class="register-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="first_name">Ad *</label>
+                            <input type="text" id="first_name" name="first_name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="last_name">Soyad *</label>
+                            <input type="text" id="last_name" name="last_name" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg_email">E-posta *</label>
+                        <input type="email" id="reg_email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg_phone">Telefon</label>
+                        <input type="tel" id="reg_phone" name="phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="reg_password">Şifre *</label>
+                        <input type="password" id="reg_password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm_password">Şifre Tekrar *</label>
+                        <input type="password" id="confirm_password" name="confirm_password" required>
+                    </div>
+                    <input type="hidden" name="user_type" value="customer">
+                    <div class="form-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="terms" required>
+                            <span class="checkmark"></span>
+                            <a href="#" class="terms-link">Kullanım şartlarını</a> kabul ediyorum
+                        </label>
+                    </div>
+                    <button type="submit" class="modal-btn primary">Kayıt Ol</button>
+                </form>
+                <div class="modal-footer">
+                    <p>Zaten hesabınız var mı? <a href="#" onclick="switchToLogin()">Giriş yap</a></p>
+                    <p>Organizatör müsünüz? <a href="organizator.php">Organizatör Kaydı</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
+
+        
         // Kaydırmalı Slider JavaScript
         document.addEventListener('DOMContentLoaded', function() {
             const sliderContainer = document.querySelector('.slider-container');
@@ -2082,12 +2494,8 @@
         document.querySelectorAll('.category-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 const category = this.dataset.category;
-                // Here you can add functionality to filter events by category
-                console.log('Selected category:', category);
-                
-                // Add active state
-                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
+                // Etkinlikler sayfasına kategori ile yönlendir
+                window.location.href = `etkinlikler.php?category=${category}`;
             });
         });
 
@@ -2103,10 +2511,9 @@
         }
 
         function showLoginForm() {
-            // Giriş yap formunu göster
-            window.location.href = 'login.php';
-            closeAccountSidebar();
-        }
+    // Sidebar kapatılmıyor, modal direkt açılıyor
+    openModal('loginModal');
+}
 
         function showRegisterForm() {
             // Kayıt ol formunu göster
@@ -2120,11 +2527,158 @@
             closeAccountSidebar();
         }
 
+                // Modal Functions - Güncellenmiş
+        function showLoginForm() {
+            // Sidebar'ı kapatmıyoruz, modal direkt açılıyor
+            openModal('loginModal');
+        }
+
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function switchToRegister() {
+            closeModal('loginModal');
+            setTimeout(() => {
+                openModal('registerModal');
+            }, 300);
+        }
+
+        function switchToLogin() {
+            closeModal('registerModal');
+            setTimeout(() => {
+                openModal('loginModal');
+            }, 300);
+        }
+
+        // ESC tuşu ile modal kapatma
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal('loginModal');
+                closeModal('registerModal');
+            }
+        });
+
         // ESC tuşu ile sidebar kapat
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 closeAccountSidebar();
             }
+        });
+
+        // Login Form Handler - Güncellenmiş
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const messageDiv = document.getElementById('loginMessage');
+            const submitBtn = this.querySelector('button[type="submit"]');
+            
+            // Loading state
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Giriş yapılıyor...';
+            
+            fetch('auth/login.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Login response:', data); // Debug için
+                messageDiv.style.display = 'block';
+                messageDiv.className = 'message ' + (data.success ? 'success' : 'error');
+                messageDiv.textContent = data.message;
+                
+                if (data.success) {
+                    setTimeout(() => {
+                        // Ana sayfaya yönlendir ve sayfayı yenile
+                        window.location.href = '/Biletjack/index.php';
+                    }, 1500);
+                } else {
+                    // Reset button
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Giriş Yap';
+                }
+            })
+            .catch(error => {
+                console.error('Login error:', error); // Debug için
+                messageDiv.style.display = 'block';
+                messageDiv.className = 'message error';
+                messageDiv.textContent = 'Bir hata oluştu. Lütfen tekrar deneyiniz.';
+                
+                // Reset button
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Giriş Yap';
+            });
+        });
+
+        // Register Form Handler - Güncellenmiş
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const password = document.getElementById('reg_password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            const messageDiv = document.getElementById('registerMessage');
+            const submitBtn = this.querySelector('button[type="submit"]');
+            
+            if (password !== confirmPassword) {
+                messageDiv.style.display = 'block';
+                messageDiv.className = 'message error';
+                messageDiv.textContent = 'Şifreler eşleşmiyor.';
+                return;
+            }
+            
+            if (password.length < 6) {
+                messageDiv.style.display = 'block';
+                messageDiv.className = 'message error';
+                messageDiv.textContent = 'Şifre en az 6 karakter olmalıdır.';
+                return;
+            }
+            
+            // Loading state
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Kayıt yapılıyor...';
+            
+            const formData = new FormData(this);
+            
+            fetch('auth/register.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                messageDiv.style.display = 'block';
+                messageDiv.className = 'message ' + (data.success ? 'success' : 'error');
+                messageDiv.textContent = data.message;
+                
+                if (data.success) {
+                    setTimeout(() => {
+                        // Sayfayı yeniden yükle ki session verileri güncellensin
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    // Reset button
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Kayıt Ol';
+                }
+            })
+            .catch(error => {
+                messageDiv.style.display = 'block';
+                messageDiv.className = 'message error';
+                messageDiv.textContent = 'Bir hata oluştu. Lütfen tekrar deneyiniz.';
+                
+                // Reset button
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Kayıt Ol';
+            });
         });
     </script>
 </body>
