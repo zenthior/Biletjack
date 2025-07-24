@@ -365,7 +365,6 @@ include 'includes/header.php';
         <!-- Sayfa 2: Bilet Seçimi -->
         <div id="modalPage2" class="modal-page">
             <div class="modal-body">
-                <h4>Bilet Türü ve Adet Seçimi</h4>
                 <div class="ticket-selection">
                     <div class="selected-ticket-info">
                         <h5 id="selectedTicketName"></h5>
@@ -396,6 +395,7 @@ include 'includes/header.php';
 </div>
 
 <style>
+/* Modal Stilleri */
 .ticket-modal {
     display: none;
     position: fixed;
@@ -600,160 +600,7 @@ include 'includes/header.php';
     background: #5a6fd8;
     transform: translateY(-1px);
 }
-</style>
 
-<script>
-// Açıklama göster/gizle fonksiyonu
-function toggleDescription() {
-    const shortDesc = document.querySelector('.description-short');
-    const fullDesc = document.querySelector('.description-full');
-    const readMoreBtn = document.querySelector('.btn-read-more');
-    
-    if (fullDesc.style.display === 'none') {
-        shortDesc.style.display = 'none';
-        fullDesc.style.display = 'block';
-        readMoreBtn.innerHTML = 'Daha az göster <i class="fas fa-chevron-up"></i>';
-    } else {
-        shortDesc.style.display = 'block';
-        fullDesc.style.display = 'none';
-        readMoreBtn.innerHTML = 'Devamını oku <i class="fas fa-chevron-down"></i>';
-    }
-}
-
-// Modal fonksiyonları
-function openTicketModal(ticketData) {
-    selectedTicketData = ticketData;
-    currentQuantity = 1;
-    
-    document.getElementById('ticketModal').style.display = 'block';
-    document.getElementById('modalPage1').classList.add('active');
-    document.getElementById('modalPage2').classList.remove('active');
-    
-    // Sayfa 2'deki bilgileri doldur
-    document.getElementById('selectedTicketName').textContent = ticketData.name;
-    document.getElementById('selectedTicketPrice').textContent = '₺' + ticketData.price;
-    document.getElementById('selectedTicketDescription').textContent = ticketData.description || '';
-    document.getElementById('ticketQuantity').value = currentQuantity;
-    updateTotalPrice();
-}
-
-function closeTicketModal() {
-    document.getElementById('ticketModal').style.display = 'none';
-}
-
-function goToPage2() {
-    document.getElementById('modalPage1').classList.remove('active');
-    document.getElementById('modalPage2').classList.add('active');
-}
-
-function goToPage1() {
-    document.getElementById('modalPage2').classList.remove('active');
-    document.getElementById('modalPage1').classList.add('active');
-}
-
-function increaseQuantity() {
-    if (currentQuantity < 10) {
-        currentQuantity++;
-        document.getElementById('ticketQuantity').value = currentQuantity;
-        updateTotalPrice();
-    }
-}
-
-function decreaseQuantity() {
-    if (currentQuantity > 1) {
-        currentQuantity--;
-        document.getElementById('ticketQuantity').value = currentQuantity;
-        updateTotalPrice();
-    }
-}
-
-function updateTotalPrice() {
-    const total = selectedTicketData.price * currentQuantity;
-    document.getElementById('totalPrice').textContent = '₺' + total.toLocaleString('tr-TR');
-}
-
-function addToCart() {
-    const eventData = {
-        eventTitle: '<?php echo addslashes($event['title']); ?>',
-        ticketName: selectedTicketData.name,
-        ticketPrice: selectedTicketData.price,
-        quantity: currentQuantity,
-        total: selectedTicketData.price * currentQuantity,
-        eventDate: '<?php echo date('d F Y - H:i', strtotime($event['event_date'])); ?>',
-        eventLocation: '<?php echo addslashes($event['venue_name']); ?>'
-    };
-    
-    // Header.php'deki addToCart fonksiyonunu çağır
-     if (typeof addToCart === 'function') {
-         addToCart(eventData);
-     }
-    
-    // Modal'ı kapat
-    closeTicketModal();
-    
-    // Sepet sayfasına yönlendir
-    setTimeout(() => {
-        window.location.href = 'sepet.php';
-    }, 1000);
-}
-
-// Bilet satın alma fonksiyonu
-document.querySelectorAll('.btn-buy-ticket').forEach(button => {
-    button.addEventListener('click', function() {
-        const ticketId = this.dataset.ticketId;
-        
-        // Bilet bilgilerini bul
-        const ticketData = {
-            id: ticketId,
-            name: this.closest('.ticket-type-item').querySelector('.ticket-name').textContent,
-            price: parseInt(this.closest('.ticket-type-item').querySelector('.current-price, .discount-price').textContent.replace(/[^0-9]/g, '')),
-            description: this.closest('.ticket-type-item').querySelector('.ticket-description')?.textContent || ''
-        };
-        
-        openTicketModal(ticketData);
-    });
-});
-
-// Modal dışına tıklayınca kapat
-window.onclick = function(event) {
-    const modal = document.getElementById('ticketModal');
-    if (event.target === modal) {
-        closeTicketModal();
-    }
-}
-
-// Sayfa başlığını güncelle
-document.title = '<?php echo htmlspecialchars($event['title']); ?> - BiletJack';
-
-// Geri butonu işlevi
-if (document.querySelector('.btn-back')) {
-    document.querySelector('.btn-back').addEventListener('click', function() {
-        window.history.back();
-    });
-}
-</style>
-
-// Bilet satın alma fonksiyonu
-document.querySelectorAll('.btn-buy-ticket').forEach(button => {
-    button.addEventListener('click', function() {
-        const ticketId = this.dataset.ticketId;
-        // TODO: Bilet satın alma modalını aç
-        alert('Bilet satın alma özelliği yakında eklenecek!');
-    });
-});
-
-// Sayfa başlığını güncelle
-document.title = '<?php echo htmlspecialchars($event['title']); ?> - BiletJack';
-
-// Geri butonu işlevi
-if (document.querySelector('.btn-back')) {
-    document.querySelector('.btn-back').addEventListener('click', function() {
-        window.history.back();
-    });
-}
-</style>
-
-<style>
 /* Harita stilleri */
 .map-container {
     margin-top: 1rem;
@@ -851,7 +698,6 @@ if (document.querySelector('.btn-back')) {
 .btn-share:hover {
     background: #38a169;
 }
-}
 
 .btn-map {
     background: #667eea;
@@ -891,11 +737,101 @@ if (document.querySelector('.btn-back')) {
     }
 }
 </style>
-</script>
-
-<?php include 'includes/footer.php'; ?>
 
 <script>
+// Global değişkenler
+let selectedTicketData = null;
+let currentQuantity = 1;
+
+// Açıklama göster/gizle fonksiyonu
+function toggleDescription() {
+    const shortDesc = document.querySelector('.description-short');
+    const fullDesc = document.querySelector('.description-full');
+    const readMoreBtn = document.querySelector('.btn-read-more');
+    
+    if (fullDesc.style.display === 'none') {
+        shortDesc.style.display = 'none';
+        fullDesc.style.display = 'block';
+        readMoreBtn.innerHTML = 'Daha az göster <i class="fas fa-chevron-up"></i>';
+    } else {
+        shortDesc.style.display = 'block';
+        fullDesc.style.display = 'none';
+        readMoreBtn.innerHTML = 'Devamını oku <i class="fas fa-chevron-down"></i>';
+    }
+}
+
+// Modal fonksiyonları
+function openTicketModal(ticketData) {
+    selectedTicketData = ticketData;
+    currentQuantity = 1;
+    
+    document.getElementById('ticketModal').style.display = 'block';
+    document.getElementById('modalPage1').classList.add('active');
+    document.getElementById('modalPage2').classList.remove('active');
+    
+    // Sayfa 2'deki bilgileri doldur
+    document.getElementById('selectedTicketName').textContent = ticketData.name;
+    document.getElementById('selectedTicketPrice').textContent = '₺' + ticketData.price;
+    document.getElementById('selectedTicketDescription').textContent = ticketData.description || '';
+    document.getElementById('ticketQuantity').value = currentQuantity;
+    updateTotalPrice();
+}
+
+function closeTicketModal() {
+    document.getElementById('ticketModal').style.display = 'none';
+}
+
+function goToPage2() {
+    document.getElementById('modalPage1').classList.remove('active');
+    document.getElementById('modalPage2').classList.add('active');
+}
+
+function goToPage1() {
+    document.getElementById('modalPage2').classList.remove('active');
+    document.getElementById('modalPage1').classList.add('active');
+}
+
+function increaseQuantity() {
+    if (currentQuantity < 10) {
+        currentQuantity++;
+        document.getElementById('ticketQuantity').value = currentQuantity;
+        updateTotalPrice();
+    }
+}
+
+function decreaseQuantity() {
+    if (currentQuantity > 1) {
+        currentQuantity--;
+        document.getElementById('ticketQuantity').value = currentQuantity;
+        updateTotalPrice();
+    }
+}
+
+function updateTotalPrice() {
+    const total = selectedTicketData.price * currentQuantity;
+    document.getElementById('totalPrice').textContent = '₺' + total.toLocaleString('tr-TR');
+}
+
+function addToCart() {
+    const eventData = {
+        eventTitle: '<?php echo addslashes($event['title']); ?>',
+        ticketName: selectedTicketData.name,
+        ticketPrice: selectedTicketData.price,
+        quantity: currentQuantity,
+        total: selectedTicketData.price * currentQuantity,
+        eventDate: '<?php echo date('d F Y - H:i', strtotime($event['event_date'])); ?>',
+        eventLocation: '<?php echo addslashes($event['venue_name']); ?>'
+    };
+    
+    // Modal'ı kapat
+    closeTicketModal();
+    
+    // Sepet sayfasına yönlendir
+    setTimeout(() => {
+        window.location.href = 'sepet.php';
+    }, 1000);
+}
+
 // Harita göster/gizle fonksiyonu
 function toggleMap() {
     const mapContainer = document.getElementById('mapContainer');
@@ -973,4 +909,43 @@ function shareLocation() {
         });
     }
 }
+
+// Bilet satın alma fonksiyonu
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.btn-buy-ticket').forEach(button => {
+        button.addEventListener('click', function() {
+            const ticketId = this.dataset.ticketId;
+            
+            // Bilet bilgilerini bul
+            const ticketData = {
+                id: ticketId,
+                name: this.closest('.ticket-type-item')?.querySelector('.ticket-name')?.textContent || 'Standart Bilet',
+                price: parseInt(this.closest('.ticket-price-section, .ticket-type-item')?.querySelector('.current-price, .discount-price')?.textContent.replace(/[^0-9]/g, '') || '0'),
+                description: this.closest('.ticket-type-item')?.querySelector('.ticket-description')?.textContent || ''
+            };
+            
+            openTicketModal(ticketData);
+        });
+    });
+    
+    // Modal dışına tıklayınca kapat
+    window.onclick = function(event) {
+        const modal = document.getElementById('ticketModal');
+        if (event.target === modal) {
+            closeTicketModal();
+        }
+    }
+    
+    // Sayfa başlığını güncelle
+    document.title = '<?php echo htmlspecialchars($event['title']); ?> - BiletJack';
+    
+    // Geri butonu işlevi
+    if (document.querySelector('.btn-back')) {
+        document.querySelector('.btn-back').addEventListener('click', function() {
+            window.history.back();
+        });
+    }
+});
 </script>
+
+<?php include 'includes/footer.php'; ?>
