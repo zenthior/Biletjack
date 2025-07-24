@@ -318,7 +318,279 @@ include 'includes/header.php';
     </section>
 </main>
 
+<!-- Bilet Satın Alma Modal -->
+<div id="ticketModal" class="ticket-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalTitle">Bilet Satın Al</h3>
+            <span class="close-modal" onclick="closeTicketModal()">&times;</span>
+        </div>
+        
+        <!-- Sayfa 1: Etkinlik Kuralları -->
+        <div id="modalPage1" class="modal-page active">
+            <div class="modal-body">
+                <h4>Etkinlik Kuralları</h4>
+                <div class="rules-content">
+                    <ul class="modal-rules-list">
+                        <li>✓ Yaş sınırı yoktur</li>
+                        <li>✓ E-biletiniz tarafınıza mail ve SMS olarak iletilecektir</li>
+                        <li>✓ Çıktı almanıza gerek yoktur</li>
+                        <li>✗ Satın alınan biletlerde iptal, iade ve değişiklik yapılmamaktadır</li>
+                        <li>✓ Etkinlik girişinde bilet kontrolü yapılacaktır</li>
+                        <li>✓ Etkinlik saatinden 30 dakika önce kapılar açılacaktır</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeTicketModal()">İptal</button>
+                <button class="btn-primary" onclick="goToPage2()">Sonraki</button>
+            </div>
+        </div>
+        
+        <!-- Sayfa 2: Bilet Seçimi -->
+        <div id="modalPage2" class="modal-page">
+            <div class="modal-body">
+                <h4>Bilet Türü ve Adet Seçimi</h4>
+                <div class="ticket-selection">
+                    <div class="selected-ticket-info">
+                        <h5 id="selectedTicketName"></h5>
+                        <p id="selectedTicketPrice"></p>
+                        <p id="selectedTicketDescription"></p>
+                    </div>
+                    
+                    <div class="quantity-selector">
+                        <label for="ticketQuantity">Bilet Adedi:</label>
+                        <div class="quantity-controls">
+                            <button type="button" onclick="decreaseQuantity()">-</button>
+                            <input type="number" id="ticketQuantity" value="1" min="1" max="10" readonly>
+                            <button type="button" onclick="increaseQuantity()">+</button>
+                        </div>
+                    </div>
+                    
+                    <div class="total-price">
+                        <h4>Toplam: <span id="totalPrice">₺0</span></h4>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="goToPage1()">Geri</button>
+                <button class="btn-primary" onclick="addToCart()">Sepete Ekle</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.ticket-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 0;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #1a1a1a;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.close-modal {
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #999;
+    transition: color 0.3s;
+}
+
+.close-modal:hover {
+    color: #333;
+}
+
+.modal-page {
+    display: none;
+}
+
+.modal-page.active {
+    display: block;
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+.modal-body h4 {
+    margin: 0 0 16px 0;
+    color: #1a1a1a;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.modal-rules-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.modal-rules-list li {
+    padding: 8px 0;
+    color: #333;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.selected-ticket-info {
+    background: #f8f9fa;
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.selected-ticket-info h5 {
+    margin: 0 0 8px 0;
+    color: #1a1a1a;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.selected-ticket-info p {
+    margin: 4px 0;
+    color: #666;
+    font-size: 14px;
+}
+
+.quantity-selector {
+    margin-bottom: 20px;
+}
+
+.quantity-selector label {
+    display: block;
+    margin-bottom: 8px;
+    color: #1a1a1a;
+    font-weight: 500;
+}
+
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.quantity-controls button {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.quantity-controls button:hover {
+    background: #f8f9fa;
+    border-color: #667eea;
+}
+
+.quantity-controls input {
+    width: 60px;
+    height: 40px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.total-price {
+    text-align: center;
+    padding: 16px;
+    background: #f0f8ff;
+    border-radius: 12px;
+    border: 2px solid #667eea;
+}
+
+.total-price h4 {
+    margin: 0;
+    color: #667eea;
+    font-size: 18px;
+}
+
+.modal-footer {
+    padding: 20px 24px;
+    border-top: 1px solid #eee;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.btn-secondary {
+    padding: 12px 24px;
+    border: 1px solid #ddd;
+    background: white;
+    color: #666;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.btn-secondary:hover {
+    background: #f8f9fa;
+    border-color: #999;
+}
+
+.btn-primary {
+    padding: 12px 24px;
+    border: none;
+    background: #667eea;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    background: #5a6fd8;
+    transform: translateY(-1px);
+}
+</style>
+
 <script>
+let selectedTicketData = {};
+let currentQuantity = 1;
+
 // Açıklama göster/gizle fonksiyonu
 function toggleDescription() {
     const shortDesc = document.querySelector('.description-short');
@@ -336,14 +608,107 @@ function toggleDescription() {
     }
 }
 
+// Modal fonksiyonları
+function openTicketModal(ticketData) {
+    selectedTicketData = ticketData;
+    currentQuantity = 1;
+    
+    document.getElementById('ticketModal').style.display = 'block';
+    document.getElementById('modalPage1').classList.add('active');
+    document.getElementById('modalPage2').classList.remove('active');
+    
+    // Sayfa 2'deki bilgileri doldur
+    document.getElementById('selectedTicketName').textContent = ticketData.name;
+    document.getElementById('selectedTicketPrice').textContent = '₺' + ticketData.price;
+    document.getElementById('selectedTicketDescription').textContent = ticketData.description || '';
+    document.getElementById('ticketQuantity').value = currentQuantity;
+    updateTotalPrice();
+}
+
+function closeTicketModal() {
+    document.getElementById('ticketModal').style.display = 'none';
+}
+
+function goToPage2() {
+    document.getElementById('modalPage1').classList.remove('active');
+    document.getElementById('modalPage2').classList.add('active');
+}
+
+function goToPage1() {
+    document.getElementById('modalPage2').classList.remove('active');
+    document.getElementById('modalPage1').classList.add('active');
+}
+
+function increaseQuantity() {
+    if (currentQuantity < 10) {
+        currentQuantity++;
+        document.getElementById('ticketQuantity').value = currentQuantity;
+        updateTotalPrice();
+    }
+}
+
+function decreaseQuantity() {
+    if (currentQuantity > 1) {
+        currentQuantity--;
+        document.getElementById('ticketQuantity').value = currentQuantity;
+        updateTotalPrice();
+    }
+}
+
+function updateTotalPrice() {
+    const total = selectedTicketData.price * currentQuantity;
+    document.getElementById('totalPrice').textContent = '₺' + total.toLocaleString('tr-TR');
+}
+
+function addToCart() {
+    const eventData = {
+        eventTitle: '<?php echo addslashes($event['title']); ?>',
+        ticketName: selectedTicketData.name,
+        ticketPrice: selectedTicketData.price,
+        quantity: currentQuantity,
+        total: selectedTicketData.price * currentQuantity,
+        eventDate: '<?php echo date('d F Y - H:i', strtotime($event['event_date'])); ?>',
+        eventLocation: '<?php echo addslashes($event['venue_name']); ?>'
+    };
+    
+    // Header.php'deki addToCart fonksiyonunu çağır
+     if (typeof addToCart === 'function') {
+         addToCart(eventData);
+     }
+    
+    // Modal'ı kapat
+    closeTicketModal();
+    
+    // Sepet sayfasına yönlendir
+    setTimeout(() => {
+        window.location.href = 'sepet.php';
+    }, 1000);
+}
+
 // Bilet satın alma fonksiyonu
 document.querySelectorAll('.btn-buy-ticket').forEach(button => {
     button.addEventListener('click', function() {
         const ticketId = this.dataset.ticketId;
-        // TODO: Bilet satın alma modalını aç
-        alert('Bilet satın alma özelliği yakında eklenecek!');
+        
+        // Bilet bilgilerini bul
+        const ticketData = {
+            id: ticketId,
+            name: this.closest('.ticket-type-item').querySelector('.ticket-name').textContent,
+            price: parseInt(this.closest('.ticket-type-item').querySelector('.current-price, .discount-price').textContent.replace(/[^0-9]/g, '')),
+            description: this.closest('.ticket-type-item').querySelector('.ticket-description')?.textContent || ''
+        };
+        
+        openTicketModal(ticketData);
     });
 });
+
+// Modal dışına tıklayınca kapat
+window.onclick = function(event) {
+    const modal = document.getElementById('ticketModal');
+    if (event.target === modal) {
+        closeTicketModal();
+    }
+}
 
 // Sayfa başlığını güncelle
 document.title = '<?php echo htmlspecialchars($event['title']); ?> - BiletJack';

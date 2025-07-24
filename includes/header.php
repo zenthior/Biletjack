@@ -28,7 +28,7 @@ $userType = $isLoggedIn ? $_SESSION['user_type'] : null;
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background:rgba(87, 87, 87, 0.61); /* Koyu siyah arka plan */
+            background: rgb(87 87 87 / 28%);
             min-height: 100vh;
             color: #f5f5f5; /* Açık gri metin rengi */
         }
@@ -1197,6 +1197,242 @@ $userType = $isLoggedIn ? $_SESSION['user_type'] : null;
             color: #E91E63;
             display: none;
         }
+        
+        /* Sepet Dropdown Stilleri */
+        .cart-container {
+            position: relative;
+        }
+        
+        .cart-icon {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .cart-icon:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .cart-count {
+            background: #E91E63;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 11px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            min-width: 18px;
+        }
+        
+        .cart-dropdown {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            width: 350px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            max-height: 500px;
+            overflow: hidden;
+        }
+        
+        .cart-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .cart-dropdown-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .cart-dropdown-header h3 {
+            margin: 0;
+            color: #1a1a1a;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .cart-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #666;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .cart-close:hover {
+            color: #333;
+        }
+        
+        .cart-dropdown-items {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+        
+        .cart-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            background: #f8f9fa;
+            transition: all 0.3s;
+        }
+        
+        .cart-dropdown-item:hover {
+            background: #e9ecef;
+        }
+        
+        .cart-item-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .cart-item-name {
+            font-weight: 600;
+            color: #1a1a1a;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .cart-item-details {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 0.25rem;
+        }
+        
+        .cart-item-price {
+            font-weight: 600;
+            color: #00C896;
+            font-size: 0.9rem;
+        }
+        
+        .cart-item-remove {
+            background: #dc3545;
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .cart-item-remove:hover {
+            background: #c82333;
+            transform: scale(1.1);
+        }
+        
+        .cart-dropdown-footer {
+            padding: 1rem;
+            border-top: 1px solid #f0f0f0;
+            background: #f8f9fa;
+        }
+        
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            font-size: 1.1rem;
+        }
+        
+        .cart-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-clear,
+        .btn-cart {
+            flex: 1;
+            padding: 0.75rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+        
+        .btn-clear {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-clear:hover {
+            background: #5a6268;
+        }
+        
+        .btn-cart {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-cart:hover {
+            background: #5a6fd8;
+            color: white;
+        }
+        
+        .cart-empty {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: #666;
+        }
+        
+        .cart-empty-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.5;
+        }
+        
+        .cart-empty p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
 
         .account-option-btn:hover .option-arrow {
             opacity: 1;
@@ -2104,6 +2340,14 @@ $userType = $isLoggedIn ? $_SESSION['user_type'] : null;
                 grid-template-columns: repeat(3, 1fr);
                 gap: 0.5rem;
             }
+            
+            .cart-dropdown {
+                top: 70px;
+                right: 10px;
+                left: 10px;
+                width: auto;
+                max-width: none;
+            }
         }
 
     </style>
@@ -2152,11 +2396,37 @@ $userType = $isLoggedIn ? $_SESSION['user_type'] : null;
             <div class="sidebar-header">
                 <div class="sidebar-logo">
                     <img src="uploads/logo.png" alt="BiletJack" class="sidebar-logo-img">
-                    <a href="sepet.php" class="cart-icon" title="Sepetim">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
-                        </svg>
-                    </a>
+                    <div class="cart-container">
+                        <button class="cart-icon" onclick="toggleCartDropdown()" title="Sepetim">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                            </svg>
+                            <span id="cartCount" class="cart-count">0</span>
+                        </button>
+                        
+                        <!-- Sepet Dropdown -->
+                        <div id="cartDropdown" class="cart-dropdown">
+                            <div class="cart-dropdown-header">
+                                <h3>Sepetim</h3>
+                                <button class="cart-close" onclick="toggleCartDropdown()">&times;</button>
+                            </div>
+                            
+                            <div id="cartDropdownItems" class="cart-dropdown-items">
+                                <!-- Sepet öğeleri JavaScript ile doldurulacak -->
+                            </div>
+                            
+                            <div class="cart-dropdown-footer">
+                                <div class="cart-total">
+                                    <span>Toplam: </span>
+                                    <span id="cartTotal">₺0</span>
+                                </div>
+                                <div class="cart-actions">
+                                    <button onclick="clearCart()" class="btn-clear">Sepeti Temizle</button>
+                                    <a href="sepet.php" class="btn-cart">Sepete Git</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="sidebar-body">
@@ -2591,6 +2861,146 @@ $userType = $isLoggedIn ? $_SESSION['user_type'] : null;
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 closeAccountSidebar();
+                closeCartDropdown();
+            }
+        });
+        
+        // Sepet işlevleri
+        let cartDropdownOpen = false;
+        
+        window.toggleCartDropdown = function() {
+            const dropdown = document.getElementById('cartDropdown');
+            cartDropdownOpen = !cartDropdownOpen;
+            
+            if (cartDropdownOpen) {
+                dropdown.classList.add('active');
+                updateCartDropdown();
+            } else {
+                dropdown.classList.remove('active');
+            }
+        }
+        
+        window.closeCartDropdown = function() {
+            const dropdown = document.getElementById('cartDropdown');
+            dropdown.classList.remove('active');
+            cartDropdownOpen = false;
+        }
+        
+        window.updateCartDropdown = function() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const cartCount = document.getElementById('cartCount');
+            const cartTotal = document.getElementById('cartTotal');
+            const cartItems = document.getElementById('cartDropdownItems');
+            
+            // Sepet sayısını güncelle
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = totalItems;
+            cartCount.style.display = totalItems > 0 ? 'flex' : 'none';
+            
+            // Toplam tutarı hesapla
+            const totalAmount = cart.reduce((sum, item) => sum + item.total, 0);
+            cartTotal.textContent = '₺' + totalAmount.toLocaleString('tr-TR');
+            
+            // Sepet öğelerini göster
+            if (cart.length === 0) {
+                cartItems.innerHTML = `
+                    <div class="cart-empty">
+                        <div class="cart-empty-icon">🛒</div>
+                        <p>Sepetiniz boş</p>
+                    </div>
+                `;
+            } else {
+                cartItems.innerHTML = cart.map((item, index) => `
+                    <div class="cart-dropdown-item">
+                        <div class="cart-item-info">
+                            <div class="cart-item-name">${item.eventTitle}</div>
+                            <div class="cart-item-details">${item.ticketName} • ${item.quantity} adet</div>
+                            <div class="cart-item-price">₺${item.total.toLocaleString('tr-TR')}</div>
+                        </div>
+                        <button class="cart-item-remove" onclick="removeFromCartDropdown(${index})" title="Kaldır">
+                            ×
+                        </button>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        window.removeFromCartDropdown = function(index) {
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartDropdown();
+        }
+        
+        window.clearCart = function() {
+            localStorage.removeItem('cart');
+            updateCartDropdown();
+            closeCartDropdown();
+        }
+        
+        window.addToCart = function(eventData) {
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            
+            // Aynı bilet var mı kontrol et
+            const existingIndex = cart.findIndex(item => 
+                item.eventTitle === eventData.eventTitle && 
+                item.ticketName === eventData.ticketName
+            );
+            
+            if (existingIndex !== -1) {
+                // Mevcut bileti güncelle
+                cart[existingIndex].quantity += eventData.quantity;
+                cart[existingIndex].total = cart[existingIndex].ticketPrice * cart[existingIndex].quantity;
+            } else {
+                // Yeni bilet ekle
+                cart.push(eventData);
+            }
+            
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartDropdown();
+            
+            // Başarı mesajı göster
+            showCartNotification('Bilet sepete eklendi!');
+        }
+        
+        function showCartNotification(message) {
+            // Basit bildirim göster
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #00C896;
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                z-index: 10000;
+                font-weight: 600;
+                box-shadow: 0 4px 12px rgba(0, 200, 150, 0.3);
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+        
+        // Sayfa yüklendiğinde sepet sayısını güncelle
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCartDropdown();
+        });
+        
+        // Dropdown dışına tıklandığında kapat
+        document.addEventListener('click', function(event) {
+            const cartContainer = document.querySelector('.cart-container');
+            if (cartDropdownOpen && !cartContainer.contains(event.target)) {
+                closeCartDropdown();
             }
         });
 
