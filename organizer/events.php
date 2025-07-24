@@ -194,10 +194,19 @@ include 'includes/header.php';
                             ?>
                         </div>
                         <div class="event-actions">
+                            <?php if ($evt['status'] === 'draft'): ?>
+                            <button class="action-btn publish-btn" onclick="publishEvent(<?php echo $evt['id']; ?>)" title="Yayınla">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <?php elseif ($evt['status'] === 'published'): ?>
+                            <button class="action-btn draft-btn" onclick="unpublishEvent(<?php echo $evt['id']; ?>)" title="Taslağa Al">
+                                <i class="fas fa-eye-slash"></i>
+                            </button>
+                            <?php endif; ?>
                             <button class="action-btn" onclick="editEvent(<?php echo $evt['id']; ?>)" title="Düzenle">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="action-btn" onclick="deleteEvent(<?php echo $evt['id']; ?>)" title="Sil">
+                            <button class="action-btn delete-btn" onclick="deleteEvent(<?php echo $evt['id']; ?>)" title="Sil">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
@@ -596,6 +605,31 @@ include 'includes/header.php';
 .empty-state h3 {
     color: white;
     margin-bottom: 0.5rem;
+}
+
+/* Aksiyon Butonları */
+.action-btn.publish-btn {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.action-btn.publish-btn:hover {
+    background: linear-gradient(135deg, #38d66a 0%, #2de6c6 100%);
+}
+
+.action-btn.draft-btn {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+.action-btn.draft-btn:hover {
+    background: linear-gradient(135deg, #f95d89 0%, #fed12f 100%);
+}
+
+.action-btn.delete-btn {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+}
+
+.action-btn.delete-btn:hover {
+    background: linear-gradient(135deg, #ff5252 0%, #e53935 100%);
 }
 
 /* Etkinlik Grid */
@@ -1087,6 +1121,9 @@ function openEventModal() {
 function closeEventModal() {
     document.getElementById('eventModal').classList.remove('active');
     document.body.style.overflow = 'auto';
+    document.getElementById('eventForm').removeAttribute('data-edit-id');
+    document.getElementById('modalTitle').textContent = 'Yeni Etkinlik Ekle';
+    resetForm();
 }
 
 function resetForm() {
@@ -1386,21 +1423,123 @@ document.getElementById('eventSearch').addEventListener('input', function() {
 
 // Etkinlik İşlemleri
 function editEvent(eventId) {
-    // Etkinlik düzenleme modalını aç
-    console.log('Etkinlik düzenle:', eventId);
-    // TODO: Etkinlik verilerini yükle ve modalı aç
+    // Etkinlik verilerini yükle
+    fetch(`get_event.php?id=${eventId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                loadEventDataToModal(data.event);
+                document.getElementById('modalTitle').textContent = 'Etkinlik Düzenle';
+                document.getElementById('eventForm').dataset.editId = eventId;
+                openEventModal();
+            } else {
+                alert('Etkinlik verileri yüklenirken hata oluştu: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+        });
 }
 
 function deleteEvent(eventId) {
-    if (confirm('Bu etkinliği silmek istediğinizden emin misiniz?')) {
-        // TODO: Etkinlik silme işlemi
-        console.log('Etkinlik sil:', eventId);
+    if (confirm('Bu etkinliği silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!')) {
+        // AJAX ile etkinlik silme
+        const formData = new FormData();
+        formData.append('event_id', eventId);
+        
+        fetch('delete_event.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Etkinlik başarıyla silindi!');
+                // Sayfayı yenile
+                window.location.reload();
+            } else {
+                alert('Hata: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+        });
     }
+}
+
+function publishEvent(eventId) {
+    if (confirm('Bu etkinliği yayınlamak istediğinizden emin misiniz?')) {
+        updateEventStatus(eventId, 'published');
+    }
+}
+
+function unpublishEvent(eventId) {
+    if (confirm('Bu etkinliği taslağa almak istediğinizden emin misiniz?')) {
+        updateEventStatus(eventId, 'draft');
+    }
+}
+
+function updateEventStatus(eventId, status) {
+    const formData = new FormData();
+    formData.append('event_id', eventId);
+    formData.append('status', status);
+    
+    fetch('update_status.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Etkinlik durumu başarıyla güncellendi!');
+            // Sayfayı yenile
+            window.location.reload();
+        } else {
+            alert('Hata: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+    });
 }
 
 function viewEvent(eventId) {
     // Etkinlik detay sayfasına git
     window.open('../etkinlik-detay.php?id=' + eventId, '_blank');
+}
+
+// Etkinlik verilerini modale yükle
+function loadEventDataToModal(event) {
+    // Temel bilgiler
+    document.querySelector('input[name="title"]').value = event.title || '';
+    document.querySelector('select[name="category_id"]').value = event.category_id || '';
+    document.querySelector('textarea[name="description"]').value = event.description || '';
+    
+    // Tarih ve saat
+    if (event.event_date) {
+        const eventDate = new Date(event.event_date);
+        const dateStr = eventDate.toISOString().split('T')[0];
+        const timeStr = eventDate.toTimeString().split(' ')[0].substring(0, 5);
+        document.querySelector('input[name="event_date"]').value = dateStr;
+        document.querySelector('input[name="event_time"]').value = timeStr;
+    }
+    
+    // Mekan bilgileri
+    document.querySelector('input[name="venue_name"]').value = event.venue_name || '';
+    document.querySelector('textarea[name="venue_address"]').value = event.venue_address || '';
+    document.querySelector('input[name="city"]').value = event.city || '';
+    
+    // Fiyat bilgileri
+    document.querySelector('input[name="min_price"]').value = event.min_price || '';
+    document.querySelector('input[name="max_price"]').value = event.max_price || '';
+    
+    // İletişim bilgileri
+    document.querySelector('input[name="contact_email"]').value = event.contact_email || '';
+    document.querySelector('input[name="contact_phone"]').value = event.contact_phone || '';
+    document.querySelector('input[name="website"]').value = event.website || '';
 }
 
 // Form Gönderimi
@@ -1414,6 +1553,12 @@ document.getElementById('eventForm').addEventListener('submit', function(e) {
     // Form verilerini topla
     const formData = new FormData(this);
     
+    // Düzenleme modunda mı kontrol et
+    const editId = this.dataset.editId;
+    if (editId) {
+        formData.append('event_id', editId);
+    }
+    
     // Submit butonunu devre dışı bırak
     const submitBtn = document.getElementById('submitBtn');
     const originalText = submitBtn.innerHTML;
@@ -1421,7 +1566,8 @@ document.getElementById('eventForm').addEventListener('submit', function(e) {
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Kaydediliyor...';
     
     // AJAX ile form gönderimi
-    fetch('create_event.php', {
+    const url = editId ? 'update_event.php' : 'create_event.php';
+    fetch(url, {
         method: 'POST',
         body: formData
     })
@@ -1429,7 +1575,8 @@ document.getElementById('eventForm').addEventListener('submit', function(e) {
     .then(data => {
         if (data.success) {
             closeEventModal();
-            alert('Etkinlik başarıyla oluşturuldu!');
+            const message = editId ? 'Etkinlik başarıyla güncellendi!' : 'Etkinlik başarıyla oluşturuldu!';
+            alert(message);
             // Sayfayı yenile
             window.location.reload();
         } else {

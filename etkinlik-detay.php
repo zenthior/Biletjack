@@ -46,10 +46,10 @@ $tags = array_map('trim', $tags);
 
 // Sosyal medya linklerini kontrol et
 $socialLinks = [
-    'instagram' => $event['instagram_link'],
-    'twitter' => $event['twitter_link'],
-    'facebook' => $event['facebook_link'],
-    'website' => $event['website_link']
+    'instagram' => isset($event['instagram_url']) ? $event['instagram_url'] : '',
+    'twitter' => isset($event['twitter_url']) ? $event['twitter_url'] : '',
+    'facebook' => isset($event['facebook_url']) ? $event['facebook_url'] : '',
+    'website' => isset($event['website_url']) ? $event['website_url'] : ''
 ];
 $socialLinks = array_filter($socialLinks);
 

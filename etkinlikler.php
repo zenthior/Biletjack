@@ -1,4 +1,8 @@
 <?php 
+require_once 'includes/session.php';
+require_once 'config/database.php';
+require_once 'classes/Event.php';
+
 include 'includes/header.php'; 
 
 // Arama parametrelerini al
@@ -7,113 +11,18 @@ $category = isset($_GET['category']) ? $_GET['category'] : '';
 $sortBy = isset($_GET['sort']) ? $_GET['sort'] : 'date';
 $location = isset($_GET['location']) ? $_GET['location'] : '';
 
-// Örnek etkinlik verileri (gerçek uygulamada veritabanından gelecek)
-$allEvents = [
-    [
-        'id' => 1,
-        'title' => 'Sezen Aksu Konseri',
-        'date' => '2024-03-15',
-        'date_display' => '15 Mart 2024',
-        'price' => 250,
-        'price_display' => '₺250',
-        'location' => 'İstanbul',
-        'venue' => 'Volkswagen Arena',
-        'category' => 'konser',
-        'category_display' => 'Konser',
-        'image_bg' => 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-    ],
-    [
-        'id' => 2,
-        'title' => 'Galatasaray vs Fenerbahçe',
-        'date' => '2024-03-20',
-        'date_display' => '20 Mart 2024',
-        'price' => 180,
-        'price_display' => '₺180',
-        'location' => 'İstanbul',
-        'venue' => 'Türk Telekom Stadyumu',
-        'category' => 'spor',
-        'category_display' => 'Spor',
-        'image_bg' => 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
-    ],
-    [
-        'id' => 3,
-        'title' => 'Şahsiyet Tiyatro Oyunu',
-        'date' => '2024-03-25',
-        'date_display' => '25 Mart 2024',
-        'price' => 120,
-        'price_display' => '₺120',
-        'location' => 'Ankara',
-        'venue' => 'Devlet Tiyatrosu',
-        'category' => 'tiyatro',
-        'category_display' => 'Tiyatro',
-        'image_bg' => 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
-    ],
-    [
-        'id' => 4,
-        'title' => 'Manga Konseri',
-        'date' => '2024-03-30',
-        'date_display' => '30 Mart 2024',
-        'price' => 200,
-        'price_display' => '₺200',
-        'location' => 'İzmir',
-        'venue' => 'Kültürpark Açıkhava',
-        'category' => 'konser',
-        'category_display' => 'Konser',
-        'image_bg' => 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'
-    ],
-    [
-        'id' => 5,
-        'title' => 'Beşiktaş vs Trabzonspor',
-        'date' => '2024-04-05',
-        'date_display' => '5 Nisan 2024',
-        'price' => 160,
-        'price_display' => '₺160',
-        'location' => 'İstanbul',
-        'venue' => 'Vodafone Park',
-        'category' => 'spor',
-        'category_display' => 'Spor',
-        'image_bg' => 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
-    ],
-    [
-        'id' => 6,
-        'title' => 'Kenan Doğulu Konseri',
-        'date' => '2024-04-10',
-        'date_display' => '10 Nisan 2024',
-        'price' => 280,
-        'price_display' => '₺280',
-        'location' => 'Bursa',
-        'venue' => 'Merinos Kültür Merkezi',
-        'category' => 'konser',
-        'category_display' => 'Konser',
-        'image_bg' => 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)'
-    ],
-    [
-        'id' => 7,
-        'title' => 'Rock Festivali',
-        'date' => '2024-04-15',
-        'date_display' => '15 Nisan 2024',
-        'price' => 350,
-        'price_display' => '₺350',
-        'location' => 'İstanbul',
-        'venue' => 'Küçükçiftlik Park',
-        'category' => 'festival',
-        'category_display' => 'Festival',
-        'image_bg' => 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)'
-    ],
-    [
-        'id' => 8,
-        'title' => 'Çocuk Tiyatrosu',
-        'date' => '2024-04-20',
-        'date_display' => '20 Nisan 2024',
-        'price' => 80,
-        'price_display' => '₺80',
-        'location' => 'Ankara',
-        'venue' => 'Çocuk Sanat Merkezi',
-        'category' => 'cocuk',
-        'category_display' => 'Çocuk',
-        'image_bg' => 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)'
-    ]
-];
+// Database bağlantısını oluştur
+$database = new Database();
+$pdo = $database->getConnection();
+
+// Event sınıfını başlat
+$event = new Event($pdo);
+
+// Tüm yayınlanmış etkinlikleri çek
+$allEvents = $event->getAllEvents(0, 0, '', 'published');
+
+// Kategorileri çek
+$categories = $event->getCategories();
 
 // Filtreleme işlemleri
 $filteredEvents = $allEvents;
@@ -122,22 +31,22 @@ $filteredEvents = $allEvents;
 if (!empty($searchKeyword)) {
     $filteredEvents = array_filter($filteredEvents, function($event) use ($searchKeyword) {
         return stripos($event['title'], $searchKeyword) !== false || 
-               stripos($event['venue'], $searchKeyword) !== false ||
-               stripos($event['location'], $searchKeyword) !== false;
+               stripos($event['venue_name'], $searchKeyword) !== false ||
+               stripos($event['city'], $searchKeyword) !== false;
     });
 }
 
 // Kategoriye göre filtrele
 if (!empty($category)) {
     $filteredEvents = array_filter($filteredEvents, function($event) use ($category) {
-        return $event['category'] === $category;
+        return $event['category_id'] == $category;
     });
 }
 
 // Lokasyona göre filtrele
 if (!empty($location)) {
     $filteredEvents = array_filter($filteredEvents, function($event) use ($location) {
-        return $event['location'] === $location;
+        return stripos($event['city'], $location) !== false;
     });
 }
 
@@ -155,7 +64,7 @@ switch ($sortBy) {
         break;
     case 'date':
         usort($filteredEvents, function($a, $b) {
-            return strtotime($a['date']) - strtotime($b['date']);
+            return strtotime($a['event_date']) - strtotime($b['event_date']);
         });
         break;
     case 'name':
@@ -166,7 +75,7 @@ switch ($sortBy) {
 }
 
 // Benzersiz şehirler listesi
-$cities = array_unique(array_column($allEvents, 'location'));
+$cities = array_unique(array_column($allEvents, 'city'));
 sort($cities);
 ?>
 
@@ -331,19 +240,21 @@ sort($cities);
 }
 
 .event-card {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(15px);
     border-radius: 15px;
     overflow: hidden;
     transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     cursor: pointer;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
 .event-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-8px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .event-image {
@@ -360,7 +271,7 @@ sort($cities);
     position: absolute;
     top: 1rem;
     right: 1rem;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.8);
     color: white;
     padding: 0.3rem 0.8rem;
     border-radius: 20px;
@@ -369,7 +280,7 @@ sort($cities);
 }
 
 .event-location {
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.8);
     color: white;
     padding: 0.3rem 0.8rem;
     border-radius: 20px;
@@ -390,21 +301,23 @@ sort($cities);
 }
 
 .event-venue {
-    color: #ccc;
+    color: #e2e8f0;
     font-size: 0.9rem;
     margin-bottom: 0.5rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    font-weight: 500;
 }
 
 .event-date {
-    color: #ccc;
+    color: #e2e8f0;
     font-size: 0.9rem;
     margin-bottom: 1rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    font-weight: 500;
 }
 
 .event-footer {
@@ -414,9 +327,10 @@ sort($cities);
 }
 
 .event-price {
-    color: #667eea;
+    color: #4ade80;
     font-size: 1.3rem;
     font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .no-results {
@@ -501,12 +415,11 @@ sort($cities);
                         <label class="filter-label">Kategori</label>
                         <select name="category" class="filter-select">
                             <option value="">Tüm Kategoriler</option>
-                            <option value="konser" <?php echo $category === 'konser' ? 'selected' : ''; ?>>Konser</option>
-                            <option value="spor" <?php echo $category === 'spor' ? 'selected' : ''; ?>>Spor</option>
-                            <option value="tiyatro" <?php echo $category === 'tiyatro' ? 'selected' : ''; ?>>Tiyatro</option>
-                            <option value="festival" <?php echo $category === 'festival' ? 'selected' : ''; ?>>Festival</option>
-                            <option value="cocuk" <?php echo $category === 'cocuk' ? 'selected' : ''; ?>>Çocuk</option>
-                            <option value="eglence" <?php echo $category === 'eglence' ? 'selected' : ''; ?>>Eğlence</option>
+                            <?php foreach ($categories as $cat): ?>
+                                <option value="<?php echo $cat['id']; ?>" <?php echo ($category == $cat['id']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($cat['name']); ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                     
@@ -554,27 +467,33 @@ sort($cities);
         <?php if (count($filteredEvents) > 0): ?>
         <div class="events-grid">
             <?php foreach ($filteredEvents as $event): 
-                $eventParams = http_build_query([
-                    'title' => $event['title'],
-                    'date' => $event['date_display'],
-                    'venue' => $event['venue'],
-                    'location' => $event['location'],
-                    'price' => $event['price_display'],
-                    'category' => $event['category_display'],
-                    'imageBg' => $event['image_bg']
-                ]);
+                // Minimum fiyatı al
+                $minPrice = $event['min_price'];
+                
+                // Kategori adını bul
+                $categoryName = '';
+                foreach ($categories as $cat) {
+                    if ($cat['id'] == $event['category_id']) {
+                        $categoryName = $cat['name'];
+                        break;
+                    }
+                }
             ?>
-            <div class="event-card" onclick="window.location.href='etkinlik-detay.php?<?php echo $eventParams; ?>'">
-                <div class="event-image" style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), <?php echo $event['image_bg']; ?>">
-                    <div class="event-category"><?php echo $event['category_display']; ?></div>
-                    <div class="event-location"><?php echo $event['location']; ?></div>
+            <div class="event-card" onclick="window.location.href='etkinlik-detay.php?id=<?php echo $event['id']; ?>'">
+                <div class="event-image" style="background: <?php echo !empty($event['image_url']) ? 'url(' . htmlspecialchars($event['image_url']) . ') center/cover' : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'; ?>">
+                    <div class="event-category"><?php echo htmlspecialchars($categoryName); ?></div>
+                    <div class="event-location"><?php echo isset($event['city']) ? htmlspecialchars($event['city']) : 'Konum Belirtilmemiş'; ?></div>
                 </div>
                 <div class="event-content">
-                    <h3 class="event-title"><?php echo $event['title']; ?></h3>
-                    <p class="event-venue">🏛️ <?php echo $event['venue']; ?></p>
-                    <p class="event-date">📅 <?php echo $event['date_display']; ?></p>
+                    <h3 class="event-title"><?php echo htmlspecialchars($event['title']); ?></h3>
+                    <p class="event-venue">🏛️ <?php echo isset($event['venue_name']) ? htmlspecialchars($event['venue_name']) : 'Mekan Belirtilmemiş'; ?></p>
+                    <p class="event-date">📅 <?php echo date('d M Y - H:i', strtotime($event['event_date'])); ?></p>
                     <div class="event-footer">
-                        <span class="event-price"><?php echo $event['price_display']; ?></span>
+                        <?php if ($minPrice && $minPrice > 0): ?>
+                            <span class="event-price">₺<?php echo number_format($minPrice, 0, ',', '.'); ?></span>
+                        <?php else: ?>
+                            <span class="event-price">Fiyat Bilgisi Yok</span>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -584,9 +503,9 @@ sort($cities);
         <!-- Sonuç Bulunamadı -->
         <div class="no-results">
             <div class="no-results-icon">🔍</div>
-            <h3 class="no-results-title">Sonuç Bulunamadı</h3>
+            <h3 class="no-results-title">Etkinlik Bulunamadı</h3>
             <p class="no-results-text">
-                Aradığınız kriterlere uygun etkinlik bulunamadı.<br>
+                Henüz yayınlanmış etkinlik bulunmuyor veya aradığınız kriterlere uygun etkinlik bulunamadı.<br>
                 Lütfen farklı filtreler deneyiniz.
             </p>
         </div>

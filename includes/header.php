@@ -2391,6 +2391,12 @@ $userType = $isLoggedIn ? $_SESSION['user_type'] : null;
             const sliderContainer = document.querySelector('.slider-container');
             const slides = document.querySelectorAll('.slide');
             const dots = document.querySelectorAll('.dot');
+            
+            // Slider elementleri yoksa çık
+            if (!sliderContainer || slides.length === 0 || dots.length === 0) {
+                return;
+            }
+            
             const totalSlides = slides.length;
             
             let currentSlideIndex = 0;
