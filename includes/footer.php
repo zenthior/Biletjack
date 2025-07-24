@@ -28,9 +28,9 @@
                 <h3>Hızlı Erişim</h3>
                 <ul class="footer-links">
                     <li><a href="index.php">Ana Sayfa</a></li>
-                    <li><a href="#">Konserler</a></li>
-                    <li><a href="#">Tiyatrolar</a></li>
-                    <li><a href="#">Festivaller</a></li>
+                    <li><a href="etkinlikler.php?category=1">Konserler</a></li>
+                    <li><a href="etkinlikler.php?category=3">Tiyatrolar</a></li>
+                    <li><a href="etkinlikler.php?category=6">Festivaller</a></li>
                     <li><a href="#">Kampanyalar</a></li>
                 </ul>
             </div>
@@ -40,14 +40,14 @@
                     <li><a href="#">Hakkımızda</a></li>
                     <li><a href="#">Kariyer</a></li>
                     <li><a href="#">İletişim</a></li>
-                    <li><a href="#">Sıkça Sorulan Sorular</a></li>
+                    <li><a href="#">SSS</a></li>
                     <li><a href="#">Blog</a></li>
                 </ul>
             </div>
             <div class="footer-col">
                 <h3>Yardım</h3>
                 <ul class="footer-links">
-                    <li><a href="#">Bilet İptal/İade</a></li>
+                    <li><a href="bilet-iptal-iade.php">Bilet İptal/İade</a></li>
                     <li><a href="kullanim-kosullari.php">Kullanım Koşulları</a></li>
                     <li><a href="gizlilik-politikasi.php">Gizlilik Politikası</a></li>
                     <li><a href="cerez-politikasi.php">Çerez Politikası</a></li>
