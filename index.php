@@ -60,7 +60,7 @@ include 'includes/header.php';
             <div class="container">
                 <div class="category-buttons">
                     <button class="category-btn" data-category="konser">
-                        <div class="category-btn-icon">🎵</div>
+                        <div class="category-btn-icon">🎤</div>
                         <span>Konserler</span>
                     </button>
                     <button class="category-btn" data-category="spor">
@@ -82,6 +82,10 @@ include 'includes/header.php';
                     <button class="category-btn" data-category="festival">
                         <div class="category-btn-icon">🎉</div>
                         <span>Festival</span>
+                    </button>
+                    <button class="category-btn" data-category="indirim">
+                        <div class="category-btn-icon">🏷️</div>
+                        <span>İndirimler</span>
                     </button>
                 </div>
             </div>

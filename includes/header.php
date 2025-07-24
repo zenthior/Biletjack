@@ -1516,33 +1516,117 @@ $userType = $isLoggedIn ? $_SESSION['user_type'] : null;
         }
 
         .category-btn {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 1rem 1.5rem;
-            color: white;
+            background: transparent;
+            backdrop-filter: none;
+            border: none;
+            border-radius: 0;
+            padding: 1rem;
+            color: black;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
             gap: 0.5rem;
-            min-width: 100px;
+            min-width: 80px;
+            opacity: 1;
+            transform: none;
+            box-shadow: none;
         }
 
         .category-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.2);
+            background: #8B5CF6;
+            backdrop-filter: none;
+            border: none;
+            border-radius: 15px;
+            padding: 1rem;
+            color: white;
+            gap: 0.5rem;
+            min-width: 80px;
+            transform: none;
+            box-shadow: none;
         }
 
         .category-btn-icon {
             font-size: 1.5rem;
+            filter: none;
+            color: black;
+            transition: all 0.3s ease;
+        }
+
+        .category-btn:hover .category-btn-icon {
+            font-size: 1.5rem;
+            color: white;
+            filter: none;
         }
 
         .category-btn span {
             font-size: 0.9rem;
             font-weight: 500;
+            text-shadow: none;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            color: black;
+        }
+
+        .category-btn:hover span {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: white;
+            text-shadow: none;
+        }
+
+        /* Konser butonu için özel stil - yazılarla aynı renk */
+        .category-btn[data-category="konser"] .category-btn-icon {
+            position: relative;
+            color: black;
+            filter: none;
+        }
+
+        .category-btn[data-category="konser"] .category-btn-icon::before {
+            content: "✨";
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            font-size: 0.4rem;
+            color: #8B5CF6;
+            animation: sparkle 2s infinite;
+        }
+
+        .category-btn[data-category="konser"] .category-btn-icon::after {
+            content: "✨";
+            position: absolute;
+            bottom: -4px;
+            right: -4px;
+            font-size: 0.4rem;
+            color: #8B5CF6;
+            animation: sparkle 2s infinite 1s;
+        }
+
+        @keyframes sparkle {
+            0%, 100% {
+                opacity: 0.3;
+                transform: scale(0.8);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+
+        /* Hover durumunda da aynı stil */
+        .category-btn[data-category="konser"]:hover .category-btn-icon {
+            color: white;
+            filter: none;
+        }
+
+        /* Kategori butonlarına özel ikonlar - CSS'teki ::before tanımları kaldırıldı */
+        /* HTML'deki emojiler kullanılacak */
+
+        /* Hover animasyonu için JavaScript tetikleyicisi */
+        .category-btn.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
         }
         
         .feature-grid {
@@ -2508,6 +2592,23 @@ $userType = $isLoggedIn ? $_SESSION['user_type'] : null;
                     updateDots();
                 }
             }, 5000);
+        });
+        
+        // Kategori butonları hover animasyonu
+        document.addEventListener('DOMContentLoaded', function() {
+            const categoryBtns = document.querySelectorAll('.category-btn');
+            
+            categoryBtns.forEach((btn, index) => {
+                btn.addEventListener('mouseenter', function() {
+                    this.classList.add('visible');
+                });
+                
+                btn.addEventListener('mouseleave', function() {
+                    setTimeout(() => {
+                        this.classList.remove('visible');
+                    }, 300);
+                });
+            });
         });
         
         // Category button interactions
