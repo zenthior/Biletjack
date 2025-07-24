@@ -906,6 +906,239 @@
     }
 }
 
+/* Sanatçılar Bölümü */
+.artists-section {
+    background: white;
+    padding: 2rem 0;
+    border-top: 1px solid #eee;
+}
+
+.artists-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.artist-card {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.artist-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.artist-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    margin: 0 auto 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: white;
+    font-weight: bold;
+}
+
+.artist-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.artist-role {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* İletişim Bilgileri */
+.contact-section {
+    background: #f8f9fa;
+    padding: 2rem 0;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.contact-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.contact-card h4 {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.8rem;
+    color: #666;
+}
+
+.contact-item i {
+    margin-right: 0.8rem;
+    color: #e74c3c;
+    width: 20px;
+}
+
+.contact-item a {
+    color: #666;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.contact-item a:hover {
+    color: #e74c3c;
+}
+
+.social-links {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: white;
+    text-decoration: none;
+    transition: transform 0.3s ease;
+}
+
+.social-link:hover {
+    transform: translateY(-2px);
+}
+
+.social-link.instagram {
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+}
+
+.social-link.twitter {
+    background: #1da1f2;
+}
+
+.social-link.facebook {
+    background: #4267b2;
+}
+
+/* Organizatör Bilgileri */
+.organizer-section {
+    background: white;
+    padding: 2rem 0;
+    border-top: 1px solid #eee;
+}
+
+.organizer-card {
+    background: #f8f9fa;
+    padding: 2rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.organizer-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: white;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.organizer-info h4 {
+    font-size: 1.3rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.organizer-info p {
+    color: #666;
+    margin-bottom: 0.3rem;
+    font-size: 0.9rem;
+}
+
+/* Etiketler */
+.tags-section {
+    background: #f8f9fa;
+    padding: 2rem 0;
+}
+
+.tags-container {
+    margin-top: 1.5rem;
+}
+
+.tag {
+    display: inline-block;
+    background: #e74c3c;
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    margin: 0.2rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.tag:hover {
+    background: #d44333;
+    transform: translateY(-1px);
+    color: white;
+}
+
+/* Açıklama Genişletme */
+.description-toggle {
+    background: none;
+    border: none;
+    color: #e74c3c;
+    cursor: pointer;
+    font-weight: 600;
+    margin-top: 0.5rem;
+    padding: 0;
+    text-decoration: underline;
+}
+
+.description-toggle:hover {
+    color: #d44333;
+}
+
+.description-full {
+    display: none;
+}
+
+.description-full.show {
+    display: block;
+}
+
 @media (max-width: 480px) {
     .event-title {
         font-size: 1.5rem;
@@ -922,5 +1155,18 @@
     .btn-primary {
         padding: 0.7rem 1.2rem;
         font-size: 0.9rem;
+    }
+    
+    .organizer-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .artists-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .contact-grid {
+        grid-template-columns: 1fr;
     }
 }

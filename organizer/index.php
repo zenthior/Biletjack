@@ -56,7 +56,7 @@ include 'includes/header.php';
         <div class="nav-icon active" title="Ana Sayfa" onclick="window.location.href='./index.php'" style="cursor: pointer;">
             <i class="fas fa-home"></i>
         </div>
-        <div class="nav-icon" title="Etkinlikler">
+        <div class="nav-icon" title="Etkinlikler" onclick="window.location.href='./events.php'" style="cursor: pointer;">
             <i class="fas fa-calendar-alt"></i>
         </div>
         <div class="nav-icon" title="Analitik">
