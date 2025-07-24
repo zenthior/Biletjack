@@ -37,10 +37,10 @@
             <div class="footer-col">
                 <h3>Kurumsal</h3>
                 <ul class="footer-links">
-                    <li><a href="#">Hakkımızda</a></li>
+                    <li><a href="hakkimizda.php">Hakkımızda</a></li>
                     <li><a href="#">Kariyer</a></li>
                     <li><a href="#">İletişim</a></li>
-                    <li><a href="#">SSS</a></li>
+                    <li><a href="#">Sıkça Sorulan Sorular</a></li>
                     <li><a href="#">Blog</a></li>
                 </ul>
             </div>
