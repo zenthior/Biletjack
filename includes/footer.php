@@ -48,10 +48,10 @@
                 <h3>Yardım</h3>
                 <ul class="footer-links">
                     <li><a href="#">Bilet İptal/İade</a></li>
-                    <li><a href="#">Kullanım Koşulları</a></li>
-                    <li><a href="#">Gizlilik Politikası</a></li>
-                    <li><a href="#">Çerez Politikası</a></li>
-                    <li><a href="#">KVKK</a></li>
+                    <li><a href="kullanim-kosullari.php">Kullanım Koşulları</a></li>
+                    <li><a href="gizlilik-politikasi.php">Gizlilik Politikası</a></li>
+                    <li><a href="cerez-politikasi.php">Çerez Politikası</a></li>
+                    <li><a href="kvkk.php">KVKK</a></li>
                 </ul>
             </div>
         </div>

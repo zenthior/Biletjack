@@ -1,0 +1,378 @@
+/* Gizlilik Politikası ve Kullanım Koşulları Sayfaları CSS */
+
+/* Kullanım Koşulları Sayfası Stilleri */
+.last-updated {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(102, 126, 234, 0.1);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    border-radius: 25px;
+    color: #667eea;
+    font-size: 0.9rem;
+    font-weight: 500;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.terms-navigation {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    justify-content: center;
+}
+
+.terms-navigation .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 25px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.terms-navigation .nav-item:hover {
+    background: rgba(102, 126, 234, 0.2);
+    border-color: rgba(102, 126, 234, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+}
+
+.terms-navigation .nav-item.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: #667eea;
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.terms-navigation .nav-item i {
+    font-size: 1rem;
+}
+
+.terms-content {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 1rem;
+}
+
+.terms-content h3 {
+    color: #667eea;
+    font-size: 1.2rem;
+    margin: 1.5rem 0 1rem 0;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.terms-content h3:first-child {
+    margin-top: 0;
+}
+
+.terms-content p {
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    color: #e2e8f0;
+}
+
+.terms-content strong {
+    color: white;
+    font-weight: 600;
+}
+
+.agreement-section {
+    margin-top: 3rem;
+    display: flex;
+    justify-content: center;
+}
+
+.agreement-box {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 2rem;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.agreement-box i {
+    font-size: 3rem;
+    color: white;
+    margin-bottom: 1rem;
+}
+
+.agreement-box h3 {
+    color: white;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.agreement-box p {
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.accept-btn {
+    background: white;
+    color: #667eea;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.accept-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    background: #f8f9fa;
+}
+
+/* Gizlilik Politikası Özel Stilleri */
+.privacy-container {
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 40px;
+    background-color: #2a2a2a;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    color: #e0e0e0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.8;
+}
+
+.privacy-container h1 {
+    font-size: 2.8em;
+    color: #8a2be2;
+    text-align: center;
+    margin-bottom: 40px;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.privacy-container h2 {
+    font-size: 2em;
+    color: #9370db;
+    margin-top: 35px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #5a1e8e;
+    padding-bottom: 10px;
+}
+
+.privacy-container p {
+    margin-bottom: 20px;
+    font-size: 1.1em;
+}
+
+.privacy-container ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin-bottom: 20px;
+}
+
+.privacy-container ul li {
+    background-color: #3a3a3a;
+    margin-bottom: 10px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    border-left: 5px solid #8a2be2;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.privacy-container ul li:hover {
+    transform: translateY(-3px);
+    background-color: #4a4a4a;
+}
+
+.privacy-container a {
+    color: #8a2be2;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.privacy-container a:hover {
+    color: #a052ee;
+    text-decoration: underline;
+}
+
+.privacy-container strong {
+    color: #b19cd9;
+}
+
+/* Kullanım Koşulları Özel Stilleri */
+.terms-container {
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 40px;
+    background-color: #2a2a2a;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    color: #e0e0e0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.8;
+}
+
+.terms-container h1 {
+    font-size: 2.8em;
+    color: #8a2be2;
+    text-align: center;
+    margin-bottom: 40px;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.terms-container h2 {
+    font-size: 2em;
+    color: #9370db;
+    margin-top: 35px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #5a1e8e;
+    padding-bottom: 10px;
+}
+
+.terms-container p {
+    margin-bottom: 20px;
+    font-size: 1.1em;
+}
+
+.terms-container ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin-bottom: 20px;
+}
+
+.terms-container ul li {
+    background-color: #3a3a3a;
+    margin-bottom: 10px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    border-left: 5px solid #8a2be2;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.terms-container ul li:hover {
+    transform: translateY(-3px);
+    background-color: #4a4a4a;
+}
+
+.terms-container a {
+    color: #8a2be2;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.terms-container a:hover {
+    color: #a052ee;
+    text-decoration: underline;
+}
+
+.terms-container strong {
+    color: #b19cd9;
+}
+
+/* Responsive Ayarlamalar */
+@media (max-width: 768px) {
+    .terms-navigation {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .terms-navigation .nav-item {
+        width: 100%;
+        justify-content: center;
+        max-width: 300px;
+    }
+    
+    .terms-content {
+        padding: 1.5rem;
+    }
+    
+    .agreement-box {
+        margin: 0 1rem;
+        padding: 1.5rem;
+    }
+    
+    .last-updated {
+        margin: 1rem;
+    }
+    
+    .privacy-container,
+    .terms-container {
+        margin: 30px 15px;
+        padding: 25px;
+    }
+
+    .privacy-container h1,
+    .terms-container h1 {
+        font-size: 2.2em;
+    }
+
+    .privacy-container h2,
+    .terms-container h2 {
+        font-size: 1.7em;
+    }
+
+    .privacy-container p,
+    .terms-container p {
+        font-size: 1em;
+    }
+}
+
+@media (max-width: 480px) {
+    .terms-content {
+        padding: 1rem;
+    }
+    
+    .terms-content h3 {
+        font-size: 1.1rem;
+    }
+    
+    .agreement-box {
+        padding: 1rem;
+    }
+    
+    .accept-btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .privacy-container,
+    .terms-container {
+        margin: 20px 10px;
+        padding: 20px;
+    }
+
+    .privacy-container h1,
+    .terms-container h1 {
+        font-size: 1.8em;
+    }
+
+    .privacy-container h2,
+    .terms-container h2 {
+        font-size: 1.5em;
+    }
+}
