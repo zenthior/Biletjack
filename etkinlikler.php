@@ -83,6 +83,7 @@ sort($cities);
 .events-page {
     min-height: 100vh;
     padding: 2rem 0;
+    background: #f8f9fa;
 }
 
 .events-container {
@@ -98,34 +99,35 @@ sort($cities);
 
 .page-title {
     font-size: 2.5rem;
-    color: white;
+    color: #1a1a1a;
     margin-bottom: 1rem;
     font-weight: 700;
 }
 
 .page-subtitle {
     font-size: 1.1rem;
-    color: #ccc;
+    color: #666;
     max-width: 600px;
     margin: 0 auto;
 }
 
 .search-highlight {
-    background: rgba(102, 126, 234, 0.2);
+    background: #e3f2fd;
     padding: 1rem;
     border-radius: 10px;
     margin-bottom: 2rem;
     text-align: center;
-    color: white;
+    color: #1565c0;
+    border: 1px solid #bbdefb;
 }
 
 .filters-section {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
+    background: white;
     border-radius: 15px;
     padding: 1.5rem;
     margin-bottom: 2rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
 }
 
 .filters-row {
@@ -141,7 +143,7 @@ sort($cities);
 }
 
 .filter-label {
-    color: white;
+    color: #1a1a1a;
     margin-bottom: 0.5rem;
     font-weight: 600;
     font-size: 0.9rem;
@@ -149,21 +151,21 @@ sort($cities);
 
 .filter-input, .filter-select {
     padding: 0.75rem;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid #ddd;
     border-radius: 8px;
-    background: rgba(0, 0, 0, 0.3);
-    color: white;
+    background: white;
+    color: #1a1a1a;
     font-size: 0.9rem;
 }
 
 .filter-input::placeholder {
-    color: #999;
+    color: #666;
 }
 
 .filter-input:focus, .filter-select:focus {
     outline: none;
     border-color: #667eea;
-    background: rgba(0, 0, 0, 0.5);
+    background: white;
 }
 
 .filter-btn {
@@ -184,8 +186,8 @@ sort($cities);
 
 .clear-filters {
     background: transparent;
-    color: #ccc;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #666;
+    border: 1px solid #ddd;
     padding: 0.75rem 1rem;
     border-radius: 8px;
     cursor: pointer;
@@ -194,8 +196,8 @@ sort($cities);
 }
 
 .clear-filters:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
+    background: #f8f9fa;
+    color: #1a1a1a;
 }
 
 .results-header {
@@ -208,7 +210,7 @@ sort($cities);
 }
 
 .results-count {
-    color: white;
+    color: #1a1a1a;
     font-size: 1.1rem;
 }
 
@@ -219,42 +221,45 @@ sort($cities);
 }
 
 .sort-label {
-    color: #ccc;
+    color: #666;
     font-size: 0.9rem;
 }
 
 .sort-select {
     padding: 0.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid #ddd;
     border-radius: 6px;
-    background: rgba(0, 0, 0, 0.3);
-    color: white;
+    background: white;
+    color: #1a1a1a;
     font-size: 0.9rem;
 }
 
 .events-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, 280px);
+    gap: 144px;
     margin-bottom: 3rem;
+    justify-content: center;
 }
 
 .event-card {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(15px);
-    border-radius: 15px;
+    background: white;
+    border-radius: 16px;
     overflow: hidden;
     transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.2);
     cursor: pointer;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: none;
+    width: 280px;
+    height: 380px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .event-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
-    border-color: rgba(255, 255, 255, 0.3);
-    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 }
 
 .event-image {
@@ -262,81 +267,89 @@ sort($cities);
     background-size: cover;
     background-position: center;
     position: relative;
-    display: flex;
-    align-items: flex-end;
-    padding: 1rem;
+    border-radius: 16px 16px 0 0;
+    flex-shrink: 0;
 }
 
 .event-category {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: rgba(0, 0, 0, 0.8);
+    top: 12px;
+    left: 12px;
+    background: rgba(0, 0, 0, 0.6);
     color: white;
-    padding: 0.3rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .event-location {
-    background: rgba(0, 0, 0, 0.8);
+    position: absolute;
+    right: 12px;
+    background: rgba(0, 0, 0, 0.6);
     color: white;
-    padding: 0.3rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
 }
 
 .event-content {
-    padding: 1.5rem;
+    padding: 16px;
+    background: white;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .event-title {
-    color: white;
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin-bottom: 0.8rem;
-    line-height: 1.3;
+    color: #1a1a1a;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .event-venue {
-    color: #e2e8f0;
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 500;
+    color: #8e8e93;
+    font-size: 14px;
+    margin-bottom: 4px;
+    font-weight: 400;
+    line-height: 1.3;
 }
 
 .event-date {
-    color: #e2e8f0;
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 500;
+    color: #8e8e93;
+    font-size: 14px;
+    margin-bottom: 16px;
+    font-weight: 400;
+    line-height: 1.3;
 }
 
 .event-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    margin-top: auto;
 }
 
 .event-price {
-    color: #4ade80;
-    font-size: 1.3rem;
-    font-weight: 700;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    color: #00C896;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
 }
 
 .no-results {
     text-align: center;
     padding: 4rem 2rem;
-    color: #ccc;
+    color: #666;
 }
 
 .no-results-icon {
@@ -347,7 +360,7 @@ sort($cities);
 
 .no-results-title {
     font-size: 1.5rem;
-    color: white;
+    color: #1a1a1a;
     margin-bottom: 1rem;
 }
 
@@ -376,12 +389,67 @@ sort($cities);
     }
     
     .events-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(auto-fill, 280px);
+        gap: 16px;
+        padding: 0 16px;
     }
     
     .event-card {
-        margin: 0 0.5rem;
+        width: 280px;
     }
+}
+
+@media (max-width: 320px) {
+    .events-grid {
+        grid-template-columns: 1fr;
+        padding: 0 16px;
+    }
+    
+    .event-card {
+        width: 100%;
+        max-width: 280px;
+    }
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 3rem;
+}
+
+.pagination a, .pagination span {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.pagination a {
+    background: white;
+    color: #1a1a1a;
+    border: 1px solid #ddd;
+}
+
+.pagination a:hover {
+    background: #f8f9fa;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.pagination .current {
+    background: #667eea;
+    color: white;
+    border: 1px solid #667eea;
+}
+
+.pagination .disabled {
+    background: #f8f9fa;
+    color: #999;
+    border: 1px solid #e0e0e0;
+    cursor: not-allowed;
 }
 </style>
 
@@ -486,13 +554,13 @@ sort($cities);
                 </div>
                 <div class="event-content">
                     <h3 class="event-title"><?php echo htmlspecialchars($event['title']); ?></h3>
-                    <p class="event-venue">🏛️ <?php echo isset($event['venue_name']) ? htmlspecialchars($event['venue_name']) : 'Mekan Belirtilmemiş'; ?></p>
-                    <p class="event-date">📅 <?php echo date('d M Y - H:i', strtotime($event['event_date'])); ?></p>
+                    <p class="event-venue"><?php echo isset($event['venue_name']) ? htmlspecialchars($event['venue_name']) : 'Mekan Belirtilmemiş'; ?></p>
+                    <p class="event-date"><?php echo date('d M Y', strtotime($event['event_date'])) . ' - ' . date('H:i', strtotime($event['event_date'])); ?></p>
                     <div class="event-footer">
                         <?php if ($minPrice && $minPrice > 0): ?>
-                            <span class="event-price">₺<?php echo number_format($minPrice, 0, ',', '.'); ?></span>
+                            <span class="event-price"><?php echo number_format($minPrice, 0, ',', '.'); ?>₺</span>
                         <?php else: ?>
-                            <span class="event-price">Fiyat Bilgisi Yok</span>
+                            <span class="event-price">Ücretsiz</span>
                         <?php endif; ?>
                     </div>
                 </div>
