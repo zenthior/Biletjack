@@ -7,7 +7,7 @@
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+    background: linear-gradient(135deg, #87ceeb 0%, #b0e0e6 100%);
     color: #1e293b;
     line-height: 1.6;
     min-height: 100vh;
@@ -586,7 +586,7 @@ body {
 /* Main Content Adjustment */
 body {
     margin-left: 280px;
-    background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+    background: linear-gradient(135deg, #87ceeb 0%, #b0e0e6 100%);
     min-height: 100vh;
     padding: 40px;
 }
