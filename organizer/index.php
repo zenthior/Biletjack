@@ -53,7 +53,7 @@ include 'includes/header.php';
     </div>
     
     <div class="sidebar-nav">
-        <div class="nav-icon active" title="Ana Sayfa">
+        <div class="nav-icon active" title="Ana Sayfa" onclick="window.location.href='./index.php'" style="cursor: pointer;">
             <i class="fas fa-home"></i>
         </div>
         <div class="nav-icon" title="Etkinlikler">

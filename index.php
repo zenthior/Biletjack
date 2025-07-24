@@ -1,34 +1,20 @@
 <?php 
 require_once 'includes/session.php';
 require_once 'config/database.php';
+require_once 'classes/Event.php';
 
-// Panel'den gelenleri yönlendirme
-if (!isset($_GET['from_panel']) && isLoggedIn()) {
-    // redirectToDashboard(); // Bu satırı yoruma alın
-}
-// Remember me kontrolü
-if (isset($_COOKIE['remember_token']) && !isLoggedIn()) {
-    $database = new Database();
-    $pdo = $database->getConnection();
-    
-    $stmt = $pdo->prepare("SELECT u.* FROM users u WHERE u.remember_token = ? AND u.status = 'active'");
-    $stmt->execute([$_COOKIE['remember_token']]);
-    $user = $stmt->fetch();
-    
-    if ($user) {
-        startUserSession($user);
-        // redirectToDashboard(); // Bu satırı da kaldırın
-        // exit();
-    }
-}
+// Giriş yapmış kullanıcılar da ana sayfayı görebilir
+// Panel yönlendirmesi kaldırıldı - kullanıcılar istedikleri zaman panellerine gidebilir
 
-// Hata/başarı mesajlarını göster
-if (isset($_GET['error'])) {
-    echo '<div class="alert alert-error">' . htmlspecialchars($_GET['error']) . '</div>';
-}
-if (isset($_GET['success'])) {
-    echo '<div class="alert alert-success">' . htmlspecialchars($_GET['success']) . '</div>';
-}
+// Database bağlantısını oluştur
+$database = new Database();
+$pdo = $database->getConnection();
+
+// Event sınıfını başlat
+$event = new Event($pdo);
+
+// Yayında olan etkinlikleri çek (ana sayfa için 6 tane)
+$events = $event->getAllEvents(6, 0, '', 'published');
 
 include 'includes/header.php'; 
 ?>
@@ -124,91 +110,38 @@ include 'includes/header.php';
                     </div>
                 </div>
                 <div class="events-grid view-4">
-                    <?php
-                    // Örnek etkinlik verileri
-                    $events = [
-                        [
-                            'title' => 'Sezen Aksu Konseri',
-                            'date' => '15 Mart 2024',
-                            'price' => '₺250',
-                            'location' => 'İstanbul',
-                            'venue' => 'Volkswagen Arena',
-                            'category' => 'Konser',
-                            'image_bg' => 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-                        ],
-                        [
-                            'title' => 'Galatasaray vs Fenerbahçe',
-                            'date' => '20 Mart 2024',
-                            'price' => '₺180',
-                            'location' => 'İstanbul',
-                            'venue' => 'Türk Telekom Stadyumu',
-                            'category' => 'Spor',
-                            'image_bg' => 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
-                        ],
-                        [
-                            'title' => 'Şahsiyet Tiyatro Oyunu',
-                            'date' => '25 Mart 2024',
-                            'price' => '₺120',
-                            'location' => 'Ankara',
-                            'venue' => 'Devlet Tiyatrosu',
-                            'category' => 'Tiyatro',
-                            'image_bg' => 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
-                        ],
-                        [
-                            'title' => 'Manga Konseri',
-                            'date' => '30 Mart 2024',
-                            'price' => '₺200',
-                            'location' => 'İzmir',
-                            'venue' => 'Kültürpark Açıkhava',
-                            'category' => 'Konser',
-                            'image_bg' => 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'
-                        ],
-                        [
-                            'title' => 'Beşiktaş vs Trabzonspor',
-                            'date' => '5 Nisan 2024',
-                            'price' => '₺160',
-                            'location' => 'İstanbul',
-                            'venue' => 'Vodafone Park',
-                            'category' => 'Spor',
-                            'image_bg' => 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
-                        ],
-                        [
-                            'title' => 'Kenan Doğulu Konseri',
-                            'date' => '10 Nisan 2024',
-                            'price' => '₺280',
-                            'location' => 'Bursa',
-                            'venue' => 'Merinos Kültür Merkezi',
-                            'category' => 'Konser',
-                            'image_bg' => 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)'
-                        ]
-                    ];
-
-                    foreach ($events as $index => $event) {
-                        $eventParams = http_build_query([
-                            'title' => $event['title'],
-                            'date' => $event['date'],
-                            'venue' => $event['venue'],
-                            'location' => $event['location'],
-                            'price' => $event['price'],
-                            'category' => $event['category'],
-                            'imageBg' => $event['image_bg']
-                        ]);
-                        
-                        echo '<div class="event-card" onclick="window.location.href=\'etkinlik-detay.php?' . $eventParams . '\'" style="cursor: pointer;">';
-                        echo '<div class="event-image" style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), ' . $event['image_bg'] . '">';
-                        echo '<div class="event-location">' . $event['location'] . '</div>';
-                        echo '</div>';
-                        echo '<div class="event-content">';
-                        echo '<h3 class="event-title">' . $event['title'] . '</h3>';
-                        echo '<p class="event-venue">🏛️ ' . $event['venue'] . '</p>';
-                        echo '<p class="event-date">📅 ' . $event['date'] . '</p>';
-                        echo '<div class="event-footer">';
-                        echo '<span class="event-price">' . $event['price'] . '</span>';
-                        echo '</div>';
-                        echo '</div>';
-                        echo '</div>';
-                    }
-                    ?>
+                    <?php if (!empty($events)): ?>
+                        <?php foreach ($events as $evt): ?>
+                            <?php
+                            $eventParams = http_build_query([
+                                'id' => $evt['id'],
+                                'title' => $evt['title'],
+                                'date' => date('d M Y', strtotime($evt['event_date'])),
+                                'venue' => $evt['venue_name'],
+                                'location' => $evt['city'],
+                                'price' => '₺' . number_format($evt['min_price'], 0),
+                                'category' => $evt['category_name']
+                            ]);
+                            ?>
+                            <div class="event-card" onclick="window.location.href='etkinlik-detay.php?<?php echo $eventParams; ?>'" style="cursor: pointer;">
+                                <div class="event-image" style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), <?php echo $evt['image_url'] ? 'url(' . $evt['image_url'] . ')' : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'; ?>">
+                                    <div class="event-location"><?php echo htmlspecialchars($evt['city']); ?></div>
+                                </div>
+                                <div class="event-content">
+                                    <h3 class="event-title"><?php echo htmlspecialchars($evt['title']); ?></h3>
+                                    <p class="event-venue">🏛️ <?php echo htmlspecialchars($evt['venue_name']); ?></p>
+                                    <p class="event-date">📅 <?php echo date('d M Y', strtotime($evt['event_date'])); ?></p>
+                                    <div class="event-footer">
+                                        <span class="event-price">₺<?php echo number_format($evt['min_price'], 0); ?></span>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <div class="no-events">
+                            <p>Henüz etkinlik bulunmuyor.</p>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </section>

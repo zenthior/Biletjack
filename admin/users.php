@@ -217,6 +217,10 @@ include 'includes/header.php';
                     <i class="fas fa-file-alt"></i>
                     Raporlar
                 </a>
+                <a href="../index.php" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    Ana Sayfa
+                </a>
             </div>
         </nav>
     </div>

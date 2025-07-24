@@ -139,8 +139,8 @@ class Organizer {
         $stmt->bindParam(':user_id', $user_id);
         
         if($stmt->execute()) {
-            // Kullanıcı durumunu approved yap ve email_verified'ı true yap
-            $this->updateUserStatusByUserId($user_id, 'approved');
+            // Kullanıcı durumunu active yap ve email_verified'ı true yap
+            $this->updateUserStatusByUserId($user_id, 'active');
             $this->updateEmailVerified($user_id, true);
             return true;
         }

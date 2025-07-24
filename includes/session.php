@@ -72,7 +72,7 @@ function isOrganizerApproved() {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row['approval_status'] === 'approved' && 
                $row['email_verified'] == 1 && 
-               $row['status'] === 'approved';
+               $row['status'] === 'active';
     }
     
     return false;
@@ -156,32 +156,8 @@ function requireCustomer() {
  */
 function redirectIfLoggedIn() {
     if (isLoggedIn()) {
-        switch ($_SESSION['user_type']) {
-            case 'admin':
-                header('Location: /Biletjack/admin/index.php');
-                break;
-            case 'organizer':
-                // Organizatör durumunu kontrol et
-                global $pdo;
-                $stmt = $pdo->prepare("SELECT status FROM users WHERE id = ?");
-                $stmt->execute([$_SESSION['user_id']]);
-                $user = $stmt->fetch();
-                
-                if ($user['status'] === 'pending') {
-                    header('Location: /Biletjack/organizer/pending.php');
-                } elseif ($user['status'] === 'approved') {
-                    header('Location: /Biletjack/organizer/index.php');
-                } else {
-                    session_destroy();
-                    header('Location: /Biletjack/index.php?error=account_issue');
-                }
-                break;
-            case 'customer':
-                header('Location: /Biletjack/customer/index.php');
-                break;
-            default:
-                header('Location: /Biletjack/index.php');
-        }
+        // Tüm kullanıcı türleri için ana sayfaya yönlendir
+        header('Location: /Biletjack/index.php');
         exit();
     }
 }

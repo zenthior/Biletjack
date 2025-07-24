@@ -154,12 +154,6 @@ CREATE TABLE activity_logs (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
--- Başlangıç Verileri
-
--- Admin Kullanıcısı Oluştur (şifre: admin123)
-INSERT INTO users (email, password, first_name, last_name, user_type, status, email_verified) 
-VALUES ('admin@biletjack.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Admin', 'User', 'admin', 'active', TRUE);
-
 -- Kategoriler Ekle
 INSERT INTO categories (name, slug, icon, color, description) VALUES
 ('Konser', 'konser', '🎵', '#667eea', 'Müzik konserleri ve performansları'),
@@ -177,6 +171,9 @@ INSERT INTO settings (setting_key, setting_value, description) VALUES
 ('currency', 'TRY', 'Para birimi'),
 ('timezone', 'Europe/Istanbul', 'Zaman dilimi');
 
+-- Organizatör Detayları Ekle
+INSERT INTO organizer_details (user_id, company_name, tax_number, address, city, website, description, approval_status, approved_by, approved_at)
+VALUES (2, 'Test Event Company', '1234567890', 'Test Address', 'İstanbul', 'www.test.com', 'Test organizatör şirketi', 'approved', 1, NOW());
 
 -- Users tablosuna remember_token sütunu ekle
 ALTER TABLE users ADD COLUMN remember_token VARCHAR(64) NULL;

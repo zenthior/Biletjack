@@ -49,17 +49,7 @@ $stats = [
 ];
 
 // Son siparişleri al
-$recent_orders_query = "
-    SELECT o.*, e.title as event_title, e.event_date as event_date 
-    FROM orders o
-    LEFT JOIN events e ON o.event_id = e.id
-    WHERE o.user_id = ? AND o.payment_status = 'paid'
-    ORDER BY o.created_at DESC
-    LIMIT 5
-";
-$recent_stmt = $pdo->prepare($recent_orders_query);
-$recent_stmt->execute([$user_id]);
-$recent_orders = $recent_stmt->fetchAll(PDO::FETCH_ASSOC);
+
 
 // Aylık harcama verilerini al (son 6 ay)
 $monthly_query = "
@@ -79,147 +69,63 @@ $monthly_data = $monthly_stmt->fetchAll(PDO::FETCH_ASSOC);
 include 'includes/header.php';
 ?>
 
-<div class="main-content">
+<div class="modern-dashboard">
     <!-- Dashboard Header -->
     <div class="dashboard-header">
         <div class="welcome-section">
-            <h1>Hoş geldin, <?php echo htmlspecialchars($user['first_name']); ?></h1>
-            <p>Bugün nasılsın? İşte hesabının özeti.</p>
+            <h1 class="welcome-title">Hoş geldin, <?php echo htmlspecialchars($user['first_name']); ?></h1>
+            <p class="welcome-subtitle">Bilet yönetim panelinize hoş geldiniz</p>
         </div>
         <div class="user-profile">
             <div class="user-avatar">
                 <?php echo strtoupper(substr($user['first_name'], 0, 1)); ?>
             </div>
             <div class="user-info">
-                <h3><?php echo htmlspecialchars($user['first_name'] . ' ' . $user['last_name']); ?></h3>
-                <p>Müşteri Hesabı</p>
+                <h3 class="user-name"><?php echo htmlspecialchars($user['first_name'] . ' ' . $user['last_name']); ?></h3>
             </div>
         </div>
     </div>
 
-    <!-- İstatistik Kartları -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-header">
-                <div>
-                    <div class="stat-title">Toplam Bilet</div>
-                    <div class="stat-value"><?php echo number_format($stats['total_tickets']); ?></div>
-                </div>
-                <div class="stat-icon blue">
-                    <i class="fas fa-ticket-alt"></i>
-                </div>
-            </div>
-            <div class="stat-change positive">
-                <i class="fas fa-arrow-up"></i>
-                +12% bu ay
-            </div>
-        </div>
-        
-        <div class="stat-card">
-            <div class="stat-header">
-                <div>
-                    <div class="stat-title">Aktif Bilet</div>
-                    <div class="stat-value"><?php echo number_format($stats['active_tickets']); ?></div>
-                </div>
-                <div class="stat-icon green">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-            </div>
-            <div class="stat-change positive">
-                <i class="fas fa-arrow-up"></i>
-                +8% bu ay
-            </div>
-        </div>
-        
-        <div class="stat-card">
-            <div class="stat-header">
-                <div>
-                    <div class="stat-title">Toplam Harcama</div>
-                    <div class="stat-value">₺<?php echo number_format($stats['total_spent'], 2); ?></div>
-                </div>
-                <div class="stat-icon purple">
-                    <i class="fas fa-lira-sign"></i>
-                </div>
-            </div>
-            <div class="stat-change negative">
-                <i class="fas fa-arrow-down"></i>
-                -3% bu ay
-            </div>
-        </div>
-    </div>
+    <!-- Dashboard Grid -->
+    <div class="dashboard-grid">
 
-    <!-- Kullanım Özeti -->
-    <div class="usage-overview">
-        <div class="section-header">
-            <h2 class="section-title">Planlar & Kullanım</h2>
-            <a href="#" class="view-all-btn">
-                Tümünü Gör <i class="fas fa-arrow-right"></i>
-            </a>
-        </div>
-        
-        <div class="usage-grid">
-            <div class="usage-item">
-                <div class="usage-percentage orange">24%</div>
-                <div class="usage-label">Mobil (Lisans)</div>
-                <div class="usage-sublabel">ACTIVE PLAN - 2024</div>
+        <!-- Sol Kolon -->
+        <div class="left-column">
+            <!-- Planlar & Kullanım -->
+            <div class="section-header">
             </div>
             
-            <div class="usage-item">
-                <div class="usage-percentage orange">27%</div>
-                <div class="usage-label">Ev Telefonu (Kardeş)</div>
-                <div class="usage-sublabel">ACTIVE PLAN - 2024</div>
-            </div>
-            
-            <div class="usage-item">
-                <div class="usage-percentage red">₺60.00</div>
-                <div class="usage-label">Ev Telefonu (Diğer Pl...)</div>
-                <div class="usage-sublabel">EXPIRED PLAN - 2024</div>
-            </div>
-            
-            <div class="usage-item">
-                <div class="usage-percentage red">₺35.00</div>
-                <div class="usage-label">Cep Telefonu (Metlife Pl...)</div>
-                <div class="usage-sublabel">EXPIRED PLAN - 2024</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Faturalama ve Ödemeler -->
-    <div class="billing-payments">
-        <div class="section-header">
-            <h2 class="section-title">Faturalama & Ödemeler</h2>
-            <a href="#" class="view-all-btn">
-                Tümünü Gör <i class="fas fa-arrow-right"></i>
-            </a>
-        </div>
-        
-        <div class="billing-content">
-            <div class="billing-left">
-                <div class="billing-info">
-                    <div class="billing-amount">₺<?php echo number_format($stats['total_spent'], 2); ?></div>
-                    <div class="billing-period">Toplam Harcama</div>
-                </div>
-                
-                <div class="billing-details">
-                    <p>Nisan 2024 faturası</p>
-                    <p>Son ödeme tarihi: 15 Mayıs 2024</p>
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-label">Biletler</div>
+                    </div>
+                    <div class="stat-circle">
+                        <svg class="progress-ring" width="80" height="80">
+                            <circle class="progress-ring-circle" stroke="#00D4FF" stroke-width="6" fill="transparent" r="34" cx="40" cy="40" style="stroke-dasharray: 213.6; stroke-dashoffset: 160.2;"/>
+                        </svg>
+                        <div class="stat-percentage"><?php echo $stats['active_tickets']; ?>%</div>
+                    </div>
+                    <div class="stat-details">
+                        <div class="stat-title">Aktif Biletler</div>
+                    </div>
                 </div>
             </div>
             
-            <div class="payment-card">
-                <div class="card-amount">₺35.00</div>
-                <div class="card-label">SON FATURA</div>
-                <a href="#" class="pay-invoice-btn">FATURA ÖDE</a>
+            <!-- Kullanım Özeti -->
+            <div class="usage-summary">
+                <div class="usage-item">
+                    <div class="usage-icon mobile">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <div class="usage-details">
+                        <div class="usage-title">Biletler</div>
+                        <div class="usage-subtitle">Dijital bilet kullanımı</div>
+                    </div>
+                    <div class="usage-amount"><?php echo $stats['active_tickets']; ?></div>
+                </div>
             </div>
         </div>
-    </div>
-
-    <!-- Fatura Geçmişi Grafiği -->
-    <div class="chart-container">
-        <div class="section-header">
-            <h2 class="section-title">Fatura Geçmişi</h2>
-        </div>
-        <canvas id="monthlyChart" width="400" height="200"></canvas>
     </div>
 </div>
 

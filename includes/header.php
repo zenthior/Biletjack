@@ -2191,12 +2191,6 @@ $userType = $isLoggedIn ? $_SESSION['user_type'] : null;
                                 </a>
                             <?php endif; ?>
                         <?php elseif ($userType === 'customer'): ?>
-                            <a href="customer/index.php" class="account-option-btn">
-                                <div class="option-content">
-                                    <h3>Müşteri Paneli</h3>
-                                </div>
-                                <div class="option-arrow"></div>
-                            </a>
                             <a href="customer/tickets.php" class="account-option-btn">
                                 <div class="option-content">
                                     <h3>Biletlerim</h3>

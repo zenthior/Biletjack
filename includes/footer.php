@@ -58,9 +58,19 @@
         <div class="footer-bottom">
             <p>&copy; 2025 BiletJack. Tüm hakları saklıdır. | Güvenli ödeme sistemi ile biletinizi hemen alın!</p>
             <div class="payment-methods">
-                <img src="https://via.placeholder.com/40x25" alt="Visa">
-                <img src="https://via.placeholder.com/40x25" alt="Mastercard">
-                <img src="https://via.placeholder.com/40x25" alt="Troy">
+                <svg width="40" height="25" viewBox="0 0 40 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="40" height="25" rx="3" fill="#1A1F71"/>
+                    <text x="20" y="16" text-anchor="middle" fill="white" font-family="Arial" font-size="8" font-weight="bold">VISA</text>
+                </svg>
+                <svg width="40" height="25" viewBox="0 0 40 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="40" height="25" rx="3" fill="#EB001B"/>
+                    <circle cx="15" cy="12.5" r="8" fill="#FF5F00"/>
+                    <circle cx="25" cy="12.5" r="8" fill="#F79E1B"/>
+                </svg>
+                <svg width="40" height="25" viewBox="0 0 40 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="40" height="25" rx="3" fill="#00A651"/>
+                    <text x="20" y="16" text-anchor="middle" fill="white" font-family="Arial" font-size="7" font-weight="bold">TROY</text>
+                </svg>
             </div>
         </div>
     </div>

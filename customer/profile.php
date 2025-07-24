@@ -67,10 +67,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 include 'includes/header.php';
 ?>
 
-<div class="dashboard-container">
-    <div class="content-header">
-        <h1>Profilim</h1>
-        <p>Hesap bilgilerinizi yönetin</p>
+<div class="modern-dashboard">
+    <div class="dashboard-header">
+        <div class="welcome-section">
+            <h1 class="page-title">Profilim</h1>
+            <p class="page-subtitle">Hesap bilgilerinizi ve güvenlik ayarlarınızı yönetin</p>
+        </div>
     </div>
 
     <?php if ($message): ?>
@@ -80,69 +82,108 @@ include 'includes/header.php';
     <?php endif; ?>
 
     <div class="profile-container">
-        <div class="profile-card">
-            <h2>Kişisel Bilgiler</h2>
+        <div class="profile-grid">
+            <div class="profile-main">
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h2>Kişisel Bilgiler</h2>
+                        <p>Hesap bilgilerinizi güncelleyin</p>
+                    </div>
+                    
+                    <form method="POST" class="profile-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="first_name">Ad</label>
+                                <input type="text" id="first_name" name="first_name" value="<?php echo htmlspecialchars($userDetails['first_name']); ?>" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="last_name">Soyad</label>
+                                <input type="text" id="last_name" name="last_name" value="<?php echo htmlspecialchars($userDetails['last_name']); ?>" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">E-posta</label>
+                            <input type="email" id="email" value="<?php echo htmlspecialchars($userDetails['email']); ?>" disabled>
+                            <small class="form-note">E-posta adresi değiştirilemez</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">Telefon</label>
+                            <input type="tel" id="phone" name="phone" value="<?php echo htmlspecialchars($userDetails['phone']); ?>">
+                        </div>
+                        
+                        <div class="password-section">
+                            <h3>Şifre Değiştir</h3>
+                            <p class="section-note">Güvenliğiniz için güçlü bir şifre seçin</p>
+                            
+                            <div class="form-group">
+                                <label for="current_password">Mevcut Şifre</label>
+                                <input type="password" id="current_password" name="current_password">
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="new_password">Yeni Şifre</label>
+                                    <input type="password" id="new_password" name="new_password">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="confirm_password">Yeni Şifre Tekrar</label>
+                                    <input type="password" id="confirm_password" name="confirm_password">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                Profili Güncelle
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
             
-            <form method="POST" class="profile-form">
-                <div class="form-group">
-                    <label for="first_name">Ad</label>
-                    <input type="text" id="first_name" name="first_name" value="<?php echo htmlspecialchars($userDetails['first_name']); ?>" required>
+            <div class="profile-sidebar">
+                <div class="account-info-card">
+                    <div class="card-header">
+                        <h2>Hesap Bilgileri</h2>
+                    </div>
+                    
+                    <div class="info-list">
+                        <div class="info-item">
+                            <span class="info-label">Hesap Türü</span>
+                            <span class="info-value">Müşteri</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Üyelik Tarihi</span>
+                            <span class="info-value"><?php echo date('d.m.Y', strtotime($userDetails['created_at'])); ?></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Son Güncelleme</span>
+                            <span class="info-value"><?php echo date('d.m.Y', strtotime($userDetails['updated_at'] ?? $userDetails['created_at'])); ?></span>
+                        </div>
+                    </div>
                 </div>
                 
-                <div class="form-group">
-                    <label for="last_name">Soyad</label>
-                    <input type="text" id="last_name" name="last_name" value="<?php echo htmlspecialchars($userDetails['last_name']); ?>" required>
+                <div class="account-actions-card">
+                    <div class="card-header">
+                        <h2>Hesap İşlemleri</h2>
+                    </div>
+                    
+                    <div class="action-item">
+                        <div class="action-content">
+                            <h3>Hesap Silme</h3>
+                            <p>Hesabınızı kalıcı olarak silmek istiyorsanız, lütfen bizimle iletişime geçin.</p>
+                        </div>
+                        <a href="../iletisim.php" class="btn btn-outline-danger">
+                            <i class="fas fa-trash-alt"></i>
+                            İletişime Geç
+                        </a>
+                    </div>
                 </div>
-                
-                <div class="form-group">
-                    <label for="email">E-posta</label>
-                    <input type="email" id="email" value="<?php echo htmlspecialchars($userDetails['email']); ?>" disabled>
-                    <small>E-posta adresi değiştirilemez</small>
-                </div>
-                
-                <div class="form-group">
-                    <label for="phone">Telefon</label>
-                    <input type="tel" id="phone" name="phone" value="<?php echo htmlspecialchars($userDetails['phone']); ?>">
-                </div>
-                
-                <div class="form-group">
-                    <label for="user_type">Hesap Türü</label>
-                    <input type="text" value="Müşteri" disabled>
-                </div>
-                
-                <div class="form-group">
-                    <label for="created_at">Üyelik Tarihi</label>
-                    <input type="text" value="<?php echo date('d.m.Y', strtotime($userDetails['created_at'])); ?>" disabled>
-                </div>
-                
-                <h3>Şifre Değiştir</h3>
-                
-                <div class="form-group">
-                    <label for="current_password">Mevcut Şifre</label>
-                    <input type="password" id="current_password" name="current_password">
-                </div>
-                
-                <div class="form-group">
-                    <label for="new_password">Yeni Şifre</label>
-                    <input type="password" id="new_password" name="new_password">
-                </div>
-                
-                <div class="form-group">
-                    <label for="confirm_password">Yeni Şifre Tekrar</label>
-                    <input type="password" id="confirm_password" name="confirm_password">
-                </div>
-                
-                <button type="submit" class="btn btn-primary">Profili Güncelle</button>
-            </form>
-        </div>
-        
-        <div class="account-actions">
-            <h2>Hesap İşlemleri</h2>
-            
-            <div class="action-item">
-                <h3>Hesap Silme</h3>
-                <p>Hesabınızı kalıcı olarak silmek istiyorsanız, lütfen bizimle iletişime geçin.</p>
-                <a href="../iletisim.php" class="btn btn-danger">İletişime Geç</a>
             </div>
         </div>
     </div>
