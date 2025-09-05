@@ -526,22 +526,7 @@ include 'includes/header.php';
         <p>Çerezleri tamamen devre dışı bırakırsanız, web sitemizin bazı özellikleri düzgün çalışmayabilir. Özellikle bilet satın alma işlemleri ve kullanıcı hesabı işlevleri etkilenebilir.</p>
     </section>
 
-    <div class="cookie-controls">
-        <i class="fas fa-cookie-bite" style="font-size: 3rem; margin-bottom: 1rem;"></i>
-        <h3>Çerez Tercihlerinizi Yönetin</h3>
-        <p>Çerez kullanımımızı kabul ediyor musunuz? Tercihlerinizi aşağıdaki butonlarla belirtebilirsiniz.</p>
-        
-        <div class="cookie-buttons">
-            <button class="cookie-btn accept" onclick="acceptCookies()">
-                <i class="fas fa-check"></i>
-                Tümünü Kabul Et
-            </button>
-            <button class="cookie-btn settings" onclick="openCookieSettings()">
-                <i class="fas fa-cog"></i>
-                Ayarları Özelleştir
-            </button>
-        </div>
-    </div>
+    
 
     <div class="contact-info">
         <h3>Sorularınız mı var?</h3>

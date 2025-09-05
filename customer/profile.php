@@ -2,6 +2,7 @@
 require_once '../includes/session.php';
 require_once '../config/database.php';
 require_once '../classes/User.php';
+require_once '../includes/password_utils.php';
 
 // Müşteri kontrolü
 if (!isset($_SESSION['user_id']) || $_SESSION['user_type'] !== 'customer') {
@@ -43,7 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 throw new Exception('Yeni şifre en az 6 karakter olmalıdır.');
             }
             
-            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+            // Yeni şifre belirleme kısmında
+            $hashedPassword = bj_hash_password($newPassword);
             
             $stmt = $pdo->prepare("UPDATE users SET first_name = ?, last_name = ?, phone = ?, password = ? WHERE id = ?");
             $stmt->execute([$first_name, $last_name, $phone, $hashedPassword, $_SESSION['user_id']]);
@@ -120,7 +122,20 @@ include 'includes/header.php';
                             
                             <div class="form-group">
                                 <label for="current_password">Mevcut Şifre</label>
+                                <!-- Mevcut şifre -->
                                 <input type="password" id="current_password" name="current_password">
+                                <div class="pw-strength" style="margin-top:6px;">
+                                    <div class="pw-bar" style="height:6px;width:0%;background:#ddd;border-radius:4px;transition:width .2s ease;"></div>
+                                    <div class="pw-text" style="margin-top:6px;font-size:12px;color:#666;">Şifre gücü: - (En az orta seviye gerekir. 8+ karakter, en az iki tür: küçük/büyük/rakam)</div>
+                                </div>
+                                <!-- Yeni şifre -->
+                                <input type="password" id="new_password" name="new_password" class="pw-meter" data-require-strength="medium" data-confirm="#confirm_password">
+                                <div class="pw-strength" style="margin-top:6px;">
+                                    <div class="pw-bar" style="height:6px;width:0%;background:#ddd;border-radius:4px;transition:width .2s ease;"></div>
+                                    <div class="pw-text" style="margin-top:6px;font-size:12px;color:#666;">Şifre gücü: - (En az orta seviye gerekir. 8+ karakter, en az iki tür: küçük/büyük/rakam)</div>
+                                </div>
+                                <!-- Yeni şifre (tekrar) -->
+                                <input type="password" id="confirm_password" name="confirm_password">
                             </div>
                             
                             <div class="form-row">
@@ -190,3 +205,13 @@ include 'includes/header.php';
 </div>
 
 <?php include 'includes/footer.php'; ?>
+
+<script>
+(function initLocalPwMeter(){
+    function getLevel(p){if(!p)return{level:'empty'};const l=p.length,lo=/[a-z]/.test(p),up=/[A-Z]/.test(p),di=/\d/.test(p);const k=[lo,up,di].filter(Boolean).length;if(l>=10&&k>=3)return{level:'strong'};if(l>=8&&k>=2)return{level:'medium'};if(l>0)return{level:'weak'};return{level:'empty'};}
+    function upd(c,l){const b=c.querySelector('.pw-bar'),t=c.querySelector('.pw-text');if(!b||!t)return;let w='0%',col='#ddd',lab='Şifre gücü: -';if(l==='weak'){w='33%';col='#e74c3c';lab='Şifre gücü: Zayıf';}if(l==='medium'){w='66%';col='#f39c12';lab='Şifre gücü: Orta';}if(l==='strong'){w='100%';col='#27ae60';lab='Şifre gücü: Güçlü';}b.style.width=w;b.style.background=col;t.textContent=lab+' (En az orta seviye gerekir. 8+ karakter, en az iki tür: küçük/büyük/rakam)';t.style.color=l==='weak'?'#e74c3c':'#666';}
+    function att(inp){const c=inp.parentElement.querySelector('.pw-strength');if(!c)return;const conf=document.querySelector('#confirm_password');function v(){const val=inp.value||'';const {level}=getLevel(val);upd(c,level);if(val){if(!(level==='medium'||level==='strong')){inp.setCustomValidity('Lütfen en az orta seviye bir şifre girin (8+ karakter, en az iki tür: küçük/büyük/rakam).');}else{inp.setCustomValidity('');}}else{inp.setCustomValidity('');}if(conf){if(conf.value && conf.value!==val){conf.setCustomValidity('Şifreler eşleşmiyor.');}else{conf.setCustomValidity('');}}}
+    inp.addEventListener('input',v);if(conf)conf.addEventListener('input',v);v();}
+    (window.BJ_InitPwMeters? BJ_InitPwMeters(document) : (function(){const i=document.querySelector('input.pw-meter#new_password'); if(i) att(i);})());
+})();
+</script>

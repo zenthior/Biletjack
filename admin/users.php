@@ -94,33 +94,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $search = isset($_GET['search']) ? $_GET['search'] : '';
 $userTypeFilter = isset($_GET['user_type']) ? $_GET['user_type'] : '';
 $statusFilter = isset($_GET['status']) ? $_GET['status'] : '';
+$eventFilter = isset($_GET['event_id']) ? (int)$_GET['event_id'] : 0;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $limit = 10;
 $offset = ($page - 1) * $limit;
 
+// Seçilen etkinlik bilgisini getir
+$selectedEvent = null;
+if ($eventFilter > 0) {
+    $eventQuery = "SELECT title FROM events WHERE id = :event_id";
+    $eventStmt = $pdo->prepare($eventQuery);
+    $eventStmt->bindValue(':event_id', $eventFilter, PDO::PARAM_INT);
+    $eventStmt->execute();
+    $selectedEvent = $eventStmt->fetch(PDO::FETCH_ASSOC);
+}
+
 // Kullanıcıları getir
 $whereConditions = [];
 $params = [];
+$joinClause = '';
 
 if (!empty($search)) {
-    $whereConditions[] = "(first_name LIKE :search OR last_name LIKE :search OR email LIKE :search)";
+    $whereConditions[] = "(u.first_name LIKE :search OR u.last_name LIKE :search OR u.email LIKE :search)";
     $params[':search'] = '%' . $search . '%';
 }
 
 if (!empty($userTypeFilter)) {
-    $whereConditions[] = "user_type = :user_type";
+    $whereConditions[] = "u.user_type = :user_type";
     $params[':user_type'] = $userTypeFilter;
 }
 
 if (!empty($statusFilter)) {
-    $whereConditions[] = "status = :status";
+    $whereConditions[] = "u.status = :status";
     $params[':status'] = $statusFilter;
+}
+
+if ($eventFilter > 0) {
+    $joinClause = "INNER JOIN orders o ON u.id = o.user_id INNER JOIN tickets t ON o.id = t.order_id";
+    $whereConditions[] = "t.event_id = :event_id";
+    $params[':event_id'] = $eventFilter;
 }
 
 $whereClause = !empty($whereConditions) ? 'WHERE ' . implode(' AND ', $whereConditions) : '';
 
 // Toplam kullanıcı sayısı
-$countQuery = "SELECT COUNT(*) as total FROM users $whereClause";
+$countQuery = "SELECT COUNT(DISTINCT u.id) as total FROM users u $joinClause $whereClause";
 $countStmt = $pdo->prepare($countQuery);
 foreach ($params as $key => $value) {
     $countStmt->bindValue($key, $value);
@@ -130,12 +148,16 @@ $totalUsers = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
 $totalPages = ceil($totalUsers / $limit);
 
 // Kullanıcıları getir
-$query = "SELECT u.*, 
+$query = "SELECT DISTINCT u.*, 
                  CASE 
                      WHEN u.user_type = 'organizer' THEN od.approval_status 
                      ELSE NULL 
-                 END as organizer_status
+                 END as organizer_status,
+                 u.whatsapp_verified,
+                 u.email_verified,
+                 u.google_id
           FROM users u 
+          $joinClause
           LEFT JOIN organizer_details od ON u.id = od.user_id 
           $whereClause 
           ORDER BY u.created_at DESC 
@@ -165,9 +187,9 @@ include 'includes/header.php';
     <div class="admin-sidebar">
         <div class="sidebar-header">
             <div class="sidebar-logo">
-                <i class="fas fa-ticket-alt"></i>
+                <img src="../uploads/logo.png" alt="BiletJack Logo" style="width: 120px; height: 120px; object-fit: contain;">
             </div>
-            <h2 class="sidebar-title">BiletJack</h2>
+            <h2 class="sidebar-title">Kullanıcılar</h2>
             <p class="sidebar-subtitle">Admin Dashboard</p>
         </div>
         
@@ -235,33 +257,22 @@ include 'includes/header.php';
                 </button>
                 <div>
                     <h1 class="page-title">Kullanıcı Yönetimi</h1>
-                    <p class="page-subtitle">Sistem kullanıcılarını yönetin ve düzenleyin</p>
+                    <p class="page-subtitle">
+                        <?php if ($selectedEvent): ?>
+                            "<?php echo htmlspecialchars($selectedEvent['title']); ?>" etkinliği katılımcıları
+                        <?php else: ?>
+                            Sistem kullanıcılarını yönetin ve düzenleyin
+                        <?php endif; ?>
+                    </p>
                 </div>
             </div>
             
             <div class="header-right">
-                <div class="header-search">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" class="search-input" placeholder="Ara...">
-                </div>
-                
                 <button class="header-notifications">
                     <i class="fas fa-bell"></i>
                     <span class="notification-badge"></span>
                 </button>
-                
-                <div class="user-menu">
-                    <?php $currentUser = getCurrentUser(); ?>
-                    <div class="user-avatar">
-                        <?php echo strtoupper(substr($currentUser['first_name'], 0, 1)); ?>
-                    </div>
-                    <div class="user-info">
-                        <h4><?php echo htmlspecialchars($currentUser['first_name'] . ' ' . $currentUser['last_name']); ?></h4>
-                        <p>Admin</p>
-                    </div>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                
+
                 <a href="../auth/logout.php" class="logout-btn">
                     <i class="fas fa-sign-out-alt"></i>
                     Çıkış
@@ -348,6 +359,10 @@ include 'includes/header.php';
                 
                 <div class="controls-right">
                     <form method="GET" class="filter-form">
+                        <?php if ($eventFilter): ?>
+                            <input type="hidden" name="event_id" value="<?php echo $eventFilter; ?>">
+                        <?php endif; ?>
+                        
                         <div class="filter-group">
                             <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" 
                                    placeholder="Ad, soyad veya e-posta ara..." class="search-input">
@@ -376,10 +391,17 @@ include 'includes/header.php';
                             Filtrele
                         </button>
                         
-                        <a href="users.php" class="btn btn-outline">
-                            <i class="fas fa-times"></i>
-                            Temizle
-                        </a>
+                        <?php if ($eventFilter): ?>
+                            <a href="users.php" class="btn btn-outline">
+                                <i class="fas fa-times"></i>
+                                Etkinlik Filtresini Kaldır
+                            </a>
+                        <?php else: ?>
+                            <a href="users.php" class="btn btn-outline">
+                                <i class="fas fa-times"></i>
+                                Temizle
+                            </a>
+                        <?php endif; ?>
                     </form>
                 </div>
             </div>
@@ -409,6 +431,7 @@ include 'includes/header.php';
                                 </th>
                                 <th>Kullanıcı</th>
                                 <th>E-posta</th>
+                                <th>E-posta Doğrulama</th>
                                 <th>Telefon</th>
                                 <th>Tip</th>
                                 <th>Durum</th>
@@ -419,7 +442,7 @@ include 'includes/header.php';
                         <tbody>
                             <?php if (empty($users)): ?>
                             <tr>
-                                <td colspan="8" class="no-data">
+                                <td colspan="9" class="no-data">
                                     <div class="no-data-content">
                                         <i class="fas fa-users"></i>
                                         <h3>Kullanıcı bulunamadı</h3>
@@ -441,37 +464,70 @@ include 'includes/header.php';
                                             <div class="user-info">
                                                 <div class="user-name">
                                                     <?php echo htmlspecialchars($userData['first_name'] . ' ' . $userData['last_name']); ?>
+                                                    <?php if (!empty($userData['google_id'])): ?>
+                                                        <span class="google-badge" title="Google ile kayıt olmuş">
+                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                                                                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                                                                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                                                                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                                                            </svg>
+                                                        </span>
+                                                    <?php endif; ?>
+                                                    <?php if (!empty($userData['whatsapp_verified']) && $userData['whatsapp_verified'] == 1): ?>
+                                                        <span class="whatsapp-badge" title="WhatsApp ile kayıt olmuş">
+                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="#25D366" xmlns="http://www.w3.org/2000/svg">
+                                                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.893 3.488"/>
+                                                            </svg>
+                                                        </span>
+                                                    <?php endif; ?>
                                                 </div>
                                                 <div class="user-id">ID: <?php echo $userData['id']; ?></div>
                                             </div>
                                         </div>
                                     </td>
                                     <td><?php echo htmlspecialchars($userData['email']); ?></td>
-                                    <td><?php echo htmlspecialchars($userData['phone'] ?? '-'); ?></td>
                                     <td>
-                                        <span class="user-type-badge <?php echo $userData['user_type']; ?>">
-                                            <?php 
-                                            $typeLabels = [
-                                                'admin' => 'Admin',
-                                                'organizer' => 'Organizatör',
-                                                'customer' => 'Müşteri'
-                                            ];
-                                            echo $typeLabels[$userData['user_type']] ?? $userData['user_type'];
-                                            ?>
-                                        </span>
-                                        <?php if ($userData['user_type'] === 'organizer' && $userData['organizer_status']): ?>
-                                            <span class="organizer-status <?php echo $userData['organizer_status']; ?>">
-                                                <?php 
-                                                $statusLabels = [
-                                                    'pending' => 'Beklemede',
-                                                    'approved' => 'Onaylı',
-                                                    'rejected' => 'Reddedildi'
-                                                ];
-                                                echo $statusLabels[$userData['organizer_status']] ?? $userData['organizer_status'];
-                                                ?>
+                                        <?php if ($userData['email_verified']): ?>
+                                            <span class="verification-badge verified" title="E-posta doğrulanmış">
+                                                <i class="fas fa-check-circle"></i>
+                                                Doğrulanmış
+                                            </span>
+                                        <?php else: ?>
+                                            <span class="verification-badge not-verified" title="E-posta doğrulanmamış">
+                                                <i class="fas fa-times-circle"></i>
+                                                Doğrulanmamış
                                             </span>
                                         <?php endif; ?>
                                     </td>
+                                    <td><?php echo htmlspecialchars($userData['phone'] ?? '-'); ?></td>
+                                    <td>
+                                        <td>
+                                            <span class="user-type-badge <?php echo $userData['user_type']; ?>">
+                                                <?php 
+                                                $typeLabels = [
+                                                    'admin' => 'Admin',
+                                                    'organizer' => 'Organizatör',
+                                                    'customer' => 'Müşteri',
+                                                    'service' => 'Servis',
+                                                    'ad_agency' => 'Reklam Ajansı'
+                                                ];
+                                                echo $typeLabels[$userData['user_type']] ?? $userData['user_type'];
+                                                ?>
+                                            </span>
+                                            <?php if ($userData['user_type'] === 'organizer' && $userData['organizer_status']): ?>
+                                                <span class="organizer-status <?php echo $userData['organizer_status']; ?>">
+                                                    <?php 
+                                                    $statusLabels = [
+                                                        'pending' => 'Beklemede',
+                                                        'approved' => 'Onaylı',
+                                                        'rejected' => 'Reddedildi'
+                                                    ];
+                                                    echo $statusLabels[$userData['organizer_status']] ?? $userData['organizer_status'];
+                                                    ?>
+                                                </span>
+                                            <?php endif; ?>
+                                        </td>
                                     <td>
                                         <span class="status-badge <?php echo $userData['status']; ?>">
                                             <?php 
@@ -491,11 +547,17 @@ include 'includes/header.php';
                                                 <i class="fas fa-edit"></i>
                                             </button>
                                             
-                                            <div class="dropdown">
+                                            <div class="users-dropdown">
                                                 <button class="btn-action more" onclick="toggleDropdown(<?php echo $userData['id']; ?>)" title="Daha Fazla">
                                                     <i class="fas fa-ellipsis-v"></i>
                                                 </button>
-                                                <div class="dropdown-menu" id="dropdown-<?php echo $userData['id']; ?>">
+                                                <div class="users-dropdown-menu" id="dropdown-<?php echo $userData['id']; ?>">
+                                                    <?php if (!$userData['email_verified'] && $userData['user_type'] === 'customer'): ?>
+                                                    <button onclick="verifyEmailManually(<?php echo $userData['id']; ?>)" class="verify-email">
+                                                        <i class="fas fa-envelope-check"></i> E-posta Doğrula
+                                                    </button>
+                                                    <hr>
+                                                    <?php endif; ?>
                                                     <button onclick="changeStatus(<?php echo $userData['id']; ?>, 'active')">
                                                         <i class="fas fa-check"></i> Aktifleştir
                                                     </button>
@@ -604,7 +666,12 @@ include 'includes/header.php';
                 
                 <div class="form-group">
                     <label for="password">Şifre</label>
-                    <input type="password" id="password" name="password" required minlength="6">
+                    <!-- Yönetici kullanıcı oluşturma şifresi -->
+                    <input type="password" id="password" name="password" required minlength="6" class="pw-meter" data-require-strength="medium">
+                    <div class="pw-strength" style="margin-top:6px;">
+                        <div class="pw-bar" style="height:6px;width:0%;background:#ddd;border-radius:4px;transition:width .2s ease;"></div>
+                        <div class="pw-text" style="margin-top:6px;font-size:12px;color:#666;">Şifre gücü: - (En az orta seviye gerekir. 8+ karakter, en az iki tür: küçük/büyük/rakam)</div>
+                    </div>
                 </div>
             </div>
             
@@ -619,6 +686,17 @@ include 'includes/header.php';
             </div>
         </form>
     </div>
+</div>
+
+<script>
+(function(){function lvl(p){if(!p)return'e';const L=p.length,lo=/[a-z]/.test(p),up=/[A-Z]/.test(p),di=/\d/.test(p),k=[lo,up,di].filter(Boolean).length;if(L>=10&&k>=3)return's';if(L>=8&&k>=2)return'm';if(L>0)return'w';return'e';}
+function ui(c,l){const b=c.querySelector('.pw-bar'),t=c.querySelector('.pw-text');if(!b||!t)return;let w='0%',col='#ddd',tx='Şifre gücü: -';if(l==='w'){w='33%';col='#e74c3c';tx='Şifre gücü: Zayıf';}if(l==='m'){w='66%';col:'#f39c12';tx='Şifre gücü: Orta';}if(l==='s'){w='100%';col='#27ae60';tx='Şifre gücü: Güçlü';}b.style.width=w;b.style.background=col;t.textContent=tx+' (En az orta seviye gerekir. 8+ karakter, en az iki tür: küçük/büyük/rakam)';t.style.color=l==='w'?'#e74c3c':'#666';}
+function attach(i){const c=i.parentElement.querySelector('.pw-strength');if(!c)return;function v(){const l=lvl(i.value||'');ui(c,l);if(i.value){if(!(l==='m'||l==='s')){i.setCustomValidity('Lütfen en az orta seviye bir şifre girin.');}else{i.setCustomValidity('');}}else{i.setCustomValidity('');}}i.addEventListener('input',v);v();}
+(document.querySelectorAll('input.pw-meter')||[]).forEach(attach);})();
+</script>
+</div>
+</div>
+</div>
 </div>
 
 <!-- JavaScript -->
@@ -638,8 +716,8 @@ class UserManagement {
     bindEvents() {
         // Close dropdowns when clicking outside
         document.addEventListener('click', (e) => {
-            if (!e.target.closest('.dropdown')) {
-                document.querySelectorAll('.dropdown-menu').forEach(menu => {
+            if (!e.target.closest('.users-dropdown')) {
+                document.querySelectorAll('.users-dropdown-menu').forEach(menu => {
                     menu.style.display = 'none';
                 });
             }
@@ -744,7 +822,7 @@ function toggleDropdown(userId) {
     const isVisible = dropdown.style.display === 'block';
     
     // Close all dropdowns
-    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+    document.querySelectorAll('.users-dropdown-menu').forEach(menu => {
         menu.style.display = 'none';
     });
     

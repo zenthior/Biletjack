@@ -14,11 +14,26 @@
     <link rel="stylesheet" href="../css/admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <!-- Meta -->
     <meta name="description" content="BiletJack Admin Dashboard - Modern ve kullanıcı dostu admin paneli">
     <meta name="theme-color" content="#667eea">
     
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="../uploads/favicon.ico">
+    <?php
+    // Favicon ayarını veritabanından al
+    try {
+        require_once __DIR__ . '/../../config/database.php';
+        $stmt = $pdo->prepare("SELECT setting_value FROM settings WHERE setting_key = 'site_favicon'");
+        $stmt->execute();
+        $faviconSetting = $stmt->fetchColumn();
+        $faviconPath = $faviconSetting ? '../assets/images/' . $faviconSetting : '../assets/images/favicon.ico';
+    } catch (Exception $e) {
+        $faviconPath = '../assets/images/favicon.ico';
+    }
+    ?>
+    <link rel="icon" type="image/x-icon" href="<?php echo htmlspecialchars($faviconPath); ?>">
 </head>
 <body class="admin-body">

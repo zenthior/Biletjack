@@ -42,12 +42,19 @@ try {
     // Transaction başlat
     $pdo->beginTransaction();
     
-    // Önce bilet türlerini sil
-    $deleteTicketsSql = "DELETE FROM ticket_types WHERE event_id = :event_id";
+    // Önce bu etkinliğe ait biletleri sil
+    $deleteTicketsSql = "DELETE t FROM tickets t 
+                        INNER JOIN ticket_types tt ON t.ticket_type_id = tt.id 
+                        WHERE tt.event_id = :event_id";
     $deleteTicketsStmt = $pdo->prepare($deleteTicketsSql);
     $deleteTicketsStmt->execute(['event_id' => $eventId]);
     
-    // Etkinliği sil
+    // Sonra bilet türlerini sil
+    $deleteTicketTypesSql = "DELETE FROM ticket_types WHERE event_id = :event_id";
+    $deleteTicketTypesStmt = $pdo->prepare($deleteTicketTypesSql);
+    $deleteTicketTypesStmt->execute(['event_id' => $eventId]);
+    
+    // En son etkinliği sil
     $deleteEventSql = "DELETE FROM events WHERE id = :event_id";
     $deleteEventStmt = $pdo->prepare($deleteEventSql);
     $deleteEventStmt->execute(['event_id' => $eventId]);

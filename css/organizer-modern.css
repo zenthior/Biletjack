@@ -32,6 +32,97 @@ body {
     position: relative;
 }
 
+/* Floating toggle button - sadece mobilde görünür */
+.floating-toggle {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.floating-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(99, 102, 241, 0.6);
+}
+
+/* Masaüstünde sidebar logo tıklanamaz */
+@media (min-width: 769px) {
+    .sidebar-logo {
+        cursor: default !important;
+        pointer-events: none;
+    }
+}
+
+/* Mobil için sidebar toggle */
+@media (max-width: 768px) {
+    .modern-sidebar {
+        transition: all 0.3s ease;
+        /* Mobilde varsayılan olarak kapalı */
+        width: 0;
+        padding: 0;
+        overflow: hidden;
+        opacity: 0;
+    }
+    
+    .modern-sidebar.open {
+        width: 80px;
+        padding: 20px 0;
+        overflow: visible;
+        opacity: 1;
+    }
+    
+    .modern-sidebar.collapsed {
+        width: 0;
+        padding: 0;
+        overflow: hidden;
+        opacity: 0;
+    }
+    
+    .floating-toggle {
+        /* Mobilde varsayılan olarak görünür */
+        display: flex;
+    }
+    
+    .floating-toggle.show {
+        display: flex;
+    }
+    
+    .floating-toggle.hide {
+        display: none;
+    }
+    
+    .main-content {
+        transition: all 0.3s ease;
+        /* Mobilde varsayılan olarak genişletilmiş */
+        margin-left: 0;
+    }
+    
+    .main-content.collapsed {
+        margin-left: 100px;
+    }
+    
+    .main-content.expanded {
+        margin-left: 0;
+    }
+    
+    .sidebar-logo {
+        cursor: pointer !important;
+        pointer-events: auto;
+    }
+}
+
 .sidebar-logo {
     width: 40px;
     height: 40px;
@@ -110,6 +201,11 @@ body {
     border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.main-content.expanded {
+    margin-left: 0;
 }
 
 /* Üst Header */
@@ -221,7 +317,9 @@ body {
 
 /* Dashboard İçeriği */
 .dashboard-content {
-    padding: 30px;
+    padding: 23px;
+    background: #4c4a65;
+    border-radius: 20px;
 }
 
 /* Üst İstatistik Kartları */
@@ -555,7 +653,7 @@ body {
     
     .modern-sidebar {
         width: 60px;
-        margin-left: -20px;
+        margin-left: 0px;
     }
     
     .dashboard-content {
@@ -574,5 +672,306 @@ body {
     
     .search-container {
         max-width: none;
+    }
+}
+
+/* Rezervasyon Yönetimi Stilleri */
+.reservation-stats {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.stat-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+}
+
+.stat-badge.pending {
+    background: #f59e0b;
+}
+
+.stat-badge.approved {
+    background: #10b981;
+}
+
+.stat-badge.rejected {
+    background: #ef4444;
+}
+
+.reservations-container {
+    padding: 20px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.no-reservations {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6b7280;
+}
+
+.no-reservations i {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.reservations-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.reservation-item {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.reservation-item:hover {
+    background: rgba(255, 255, 255, 0.95);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.reservation-info {
+    margin-bottom: 12px;
+}
+
+.event-title {
+    font-weight: 600;
+    font-size: 16px;
+    color: #1f2937;
+    margin-bottom: 8px;
+}
+
+.seat-info {
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.customer-info {
+    color: #374151;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.reservation-date {
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+.reservation-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.reservation-actions button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-approve {
+    background: #10b981;
+    color: white;
+}
+
+.btn-approve:hover {
+    background: #059669;
+    transform: translateY(-1px);
+}
+
+.btn-reject {
+    background: #ef4444;
+    color: white;
+}
+
+.btn-reject:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+}
+
+.btn-contact {
+    background: #6366f1;
+    color: white;
+}
+
+.btn-contact:hover {
+    background: #4f46e5;
+    transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+    .reservation-actions {
+        flex-direction: column;
+    }
+    
+    .reservation-actions button {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .reservation-stats {
+        justify-content: center;
+    }
+    
+    .main-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .stats-row {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .organizer-wrapper {
+        padding: 10px;
+        gap: 10px;
+    }
+    
+    .modern-sidebar {
+        width: 60px;
+        padding: 15px 0;
+    }
+    
+    .sidebar-logo {
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+        margin-bottom: 30px;
+    }
+    
+    .nav-icon {
+        width: 30px;
+        height: 30px;
+        font-size: 14px;
+    }
+    
+    .main-content {
+        margin-left: 0;
+        padding: 0;
+    }
+    
+    .top-header {
+        flex-direction: column;
+        gap: 10px;
+        padding: 15px;
+    }
+    
+    .search-container {
+        width: 100%;
+        order: 2;
+    }
+    
+    .user-profile {
+        order: 1;
+    }
+    
+    .notification-icon {
+        order: 3;
+        align-self: flex-end;
+    }
+    
+    .dashboard-content {
+        padding: 15px;
+        margin: 0;
+    }
+    
+    .stats-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .stat-card {
+        padding: 16px;
+    }
+    
+    .stat-value {
+        font-size: 22px;
+    }
+    
+    .main-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .analytics-card {
+        padding: 16px;
+        overflow-x: auto;
+    }
+    
+    .card-title {
+        font-size: 16px;
+    }
+    
+    .chart-container {
+        height: 250px;
+        min-width: 300px;
+    }
+    
+    .right-sidebar {
+        gap: 15px;
+    }
+    
+    .engaged-users-card,
+    .top-buyers-card {
+        padding: 16px;
+    }
+    
+    .reservation-tabs {
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    
+    .tab-btn {
+        flex: 1;
+        min-width: 100px;
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+    
+    .reservations-container {
+        padding: 15px;
+        max-height: 400px;
+    }
+    
+    .reservation-item {
+        padding: 12px;
+    }
+    
+    .event-title {
+        font-size: 14px;
+    }
+    
+    .reservation-actions {
+        flex-direction: column;
+        gap: 6px;
+    }
+    
+    .reservation-actions button {
+        width: 100%;
+        justify-content: center;
+        padding: 10px;
+        font-size: 12px;
     }
 }

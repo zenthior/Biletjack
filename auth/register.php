@@ -3,6 +3,7 @@ require_once '../config/database.php';
 require_once '../classes/User.php';
 require_once '../classes/Organizer.php';
 require_once '../includes/session.php';
+require_once '../includes/email_verification.php';
 
 header('Content-Type: application/json');
 
@@ -61,7 +62,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user->last_name = $last_name;
     $user->phone = $phone;
     $user->user_type = $user_type;
-    $user->status = ($user_type === 'organizer') ? 'pending' : 'active';
+    $user->status = ($user_type === 'organizer') ? 'pending' : 'pending'; // Tüm kullanıcılar e-posta doğrulaması bekliyor
     
     // Kullanıcıyı kaydet
     if($user->register()) {
@@ -84,21 +85,28 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'type' => 'organizer_pending'
             ]);
         } else {
-            // Normal müşteri kaydı - otomatik giriş yap
-            startUserSession([
-                'id' => $user->id,
-                'email' => $user->email,
-                'first_name' => $user->first_name,
-                'last_name' => $user->last_name,
-                'user_type' => $user->user_type,
-                'status' => $user->status
-            ]);
+            // Normal müşteri kaydı - e-posta doğrulama gönder
+            $emailVerification = new EmailVerification($db);
+            $emailSent = $emailVerification->sendVerificationEmail(
+                $user->id, 
+                $user->email, 
+                $user->first_name, 
+                $user->last_name
+            );
             
-            echo json_encode([
-                'success' => true,
-                'message' => 'Kayıt başarılı! Hoş geldiniz.',
-                'redirect' => '/Biletjack/index.php'
-            ]);
+            if ($emailSent) {
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Kayıt başarılı! E-posta adresinize gönderilen doğrulama linkine tıklayarak hesabınızı aktifleştirin.',
+                    'type' => 'email_verification_sent'
+                ]);
+            } else {
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Kayıt başarılı! E-posta sistemi şu anda çalışmıyor. Admin panelinden manuel doğrulama yapılabilir.',
+                    'type' => 'email_verification_failed'
+                ]);
+            }
         }
     } else {
         echo json_encode([

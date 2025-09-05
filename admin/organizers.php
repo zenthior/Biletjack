@@ -54,47 +54,94 @@ include 'includes/header.php';
 ?>
 
 <div class="admin-container">
+    <!-- Ultra Modern Sidebar -->
     <div class="admin-sidebar">
         <div class="sidebar-header">
-            <h2>Admin Panel</h2>
+            <div class="sidebar-logo">
+                <img src="../uploads/logo.png" alt="BiletJack Logo" style="width: 120px; height: 120px; object-fit: contain;">
+            </div>
+            <h2 class="sidebar-title">Organizatörler</h2>
+            <p class="sidebar-subtitle">Admin Dashboard</p>
         </div>
+        
         <nav class="sidebar-nav">
-            <a href="index.php" class="nav-item">
-                <i class="icon-dashboard"></i>
-                Dashboard
-            </a>
-            <a href="users.php" class="nav-item">
-                <i class="icon-users"></i>
-                Kullanıcılar
-            </a>
-            <a href="organizers.php" class="nav-item active">
-                <i class="icon-organizer"></i>
-                Organizatörler
-                <?php if (count($pendingOrganizers) > 0): ?>
-                    <span class="badge"><?php echo count($pendingOrganizers); ?></span>
-                <?php endif; ?>
-            </a>
-            <a href="events.php" class="nav-item">
-                <i class="icon-events"></i>
-                Etkinlikler
-            </a>
-            <a href="orders.php" class="nav-item">
-                <i class="icon-orders"></i>
-                Siparişler
-            </a>
-            <a href="settings.php" class="nav-item">
-                <i class="icon-settings"></i>
-                Ayarlar
-            </a>
+            <div class="nav-section">
+                <div class="nav-section-title">Ana Menü</div>
+                <a href="index.php" class="nav-item">
+                    <i class="fas fa-chart-pie"></i>    
+                    Gösterge Paneli
+                </a>
+                <a href="analytics.php" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    Analytics
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Yönetim</div>
+                <a href="users.php" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    Kullanıcılar
+                </a>
+                <a href="organizers.php" class="nav-item active">
+                    <i class="fas fa-building"></i>
+                    Organizatörler
+                    <?php if (count($pendingOrganizers) > 0): ?>
+                        <span class="nav-badge"><?php echo count($pendingOrganizers); ?></span>
+                    <?php endif; ?>
+                </a>
+                <a href="events.php" class="nav-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    Etkinlikler
+                </a>
+                <a href="orders.php" class="nav-item">
+                    <i class="fas fa-shopping-cart"></i>
+                    Siparişler
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Sistem</div>
+                <a href="settings.php" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    Ayarlar
+                </a>
+                <a href="reports.php" class="nav-item">
+                    <i class="fas fa-file-alt"></i>
+                    Raporlar
+                </a>
+                <a href="../index.php" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    Ana Sayfa
+                </a>
+            </div>
         </nav>
     </div>
     
+    <!-- Main Content -->
     <div class="admin-content">
+        <!-- Modern Header -->
         <div class="content-header">
-            <h1>Organizatör Yönetimi</h1>
-            <div class="user-info">
-                <span>Hoş geldiniz, <?php echo getCurrentUser()['first_name']; ?></span>
-                <a href="../auth/logout.php" class="logout-btn">Çıkış</a>
+            <div class="header-left">
+                <button class="mobile-menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div>
+                    <h1 class="page-title">Organizatör Yönetimi</h1>
+                    <p class="page-subtitle">Organizatör başvurularını yönetin ve onaylayın</p>
+                </div>
+            </div>
+            
+            <div class="header-right">
+                <button class="header-notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge"></span>
+                </button>
+                
+                <a href="../auth/logout.php" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Çıkış
+                </a>
             </div>
         </div>
         
@@ -309,6 +356,11 @@ function closeModal(modalId) {
     document.getElementById(modalId).classList.remove('active');
     document.body.style.overflow = 'auto';
 }
+
+// KALDIRILDI: Mobile menu toggle inline kodu
+// document.querySelector('.mobile-menu-toggle').addEventListener('click', function() {
+//     document.querySelector('.admin-sidebar').classList.toggle('mobile-open');
+// });
 </script>
 
 <?php include 'includes/footer.php'; ?>

@@ -133,6 +133,29 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }, 20);
     });
+    
+    // Mobile sidebar toggle (global)
+    const mobileToggle = document.querySelector('.mobile-menu-toggle');
+    if (mobileToggle && sidebar) {
+        mobileToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            sidebar.classList.toggle('mobile-open');
+        });
+
+        // Sidebar dışına tıklayınca kapat
+        document.addEventListener('click', function(e) {
+            if (!sidebar.contains(e.target) && !mobileToggle.contains(e.target)) {
+                sidebar.classList.remove('mobile-open');
+            }
+        });
+
+        // ESC ile kapat
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                sidebar.classList.remove('mobile-open');
+            }
+        });
+    }
 });
 
 // Utility functions
@@ -158,3 +181,36 @@ function formatCurrency(amount) {
         currency: 'TRY'
     }).format(amount);
 }
+
+// Manuel e-posta doğrulama fonksiyonu
+function verifyEmailManually(userId) {
+    if (!confirm('Bu kullanıcının e-posta adresini manuel olarak doğrulamak istediğinizden emin misiniz?')) {
+        return;
+    }
+    
+    fetch('verify_email_manually.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'user_id=' + userId
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification(data.message, 'success');
+            // Sayfayı yenile
+            setTimeout(() => {
+                location.reload();
+            }, 1500);
+        } else {
+            showNotification(data.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Bir hata oluştu. Lütfen tekrar deneyin.', 'error');
+    });
+}
+
+// toggleDropdown fonksiyonu users.php dosyasında tanımlı

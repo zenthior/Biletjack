@@ -22,8 +22,12 @@ $address = trim($_POST['address'] ?? '');
 $description = trim($_POST['description'] ?? '');
 $terms = isset($_POST['org_terms']);
 
+// Şifre alanları (yeni)
+$password = $_POST['password'] ?? '';
+$confirm_password = $_POST['confirm_password'] ?? '';
+
 // Validasyon
-if (empty($org_name) || empty($contact_person) || empty($email) || empty($phone)) {
+if (empty($org_name) || empty($contact_person) || empty($email) || empty($phone) || empty($password) || empty($confirm_password)) {
     echo json_encode([
         'success' => false,
         'message' => 'Lütfen tüm zorunlu alanları doldurun.'
@@ -35,6 +39,29 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     echo json_encode([
         'success' => false,
         'message' => 'Geçerli bir e-posta adresi girin.'
+    ]);
+    exit();
+}
+
+if ($password !== $confirm_password) {
+    echo json_encode([
+        'success' => false,
+        'message' => 'Şifreler eşleşmiyor.'
+    ]);
+    exit();
+}
+
+// Orta seviye şifre kuralı: 8+ karakter ve en az iki tür (küçük/büyük/rakam)
+$len_ok = strlen($password) >= 8;
+$hasLower = preg_match('/[a-z]/', $password);
+$hasUpper = preg_match('/[A-Z]/', $password);
+$hasDigit = preg_match('/\d/', $password);
+$kinds = ($hasLower ? 1 : 0) + ($hasUpper ? 1 : 0) + ($hasDigit ? 1 : 0);
+
+if (!($len_ok && $kinds >= 2)) {
+    echo json_encode([
+        'success' => false,
+        'message' => 'Şifre en az orta seviye olmalı (8+ karakter ve en az iki tür: küçük/büyük/rakam).'
     ]);
     exit();
 }
@@ -72,12 +99,9 @@ try {
     $first_name = $name_parts[0];
     $last_name = isset($name_parts[1]) ? $name_parts[1] : '';
     
-    // Geçici şifre oluştur (kullanıcı daha sonra değiştirebilir)
-    $temp_password = 'temp' . rand(1000, 9999);
-    
-    // Kullanıcı kaydı oluştur
+    // Kullanıcı kaydı oluştur (artık geçici şifre yok)
     $user->email = $email;
-    $user->password = $temp_password;
+    $user->password = $password; // Hash işlemi User::register içinde yapılır
     $user->first_name = $first_name;
     $user->last_name = $last_name;
     $user->phone = $phone;
@@ -105,8 +129,7 @@ try {
     // Başarılı yanıt
     echo json_encode([
         'success' => true,
-        'message' => 'Organizatör başvurunuz başarıyla alındı. Onay sürecinden sonra size bilgi verilecektir.',
-        'temp_password' => $temp_password // Geçici şifre (e-posta ile gönderilebilir)
+        'message' => 'Organizatör başvurunuz başarıyla alındı. Onay sürecinden sonra size bilgi verilecektir.'
     ]);
     
 } catch (Exception $e) {

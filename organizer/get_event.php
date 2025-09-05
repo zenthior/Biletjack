@@ -48,9 +48,17 @@ try {
         throw new Exception('Etkinlik bulunamadı veya bu etkinliği düzenleme yetkiniz yok');
     }
     
+    // Bilet türlerini de getir
+    $ticketQuery = "SELECT * FROM ticket_types WHERE event_id = :event_id ORDER BY price ASC";
+    $ticketStmt = $db->prepare($ticketQuery);
+    $ticketStmt->bindParam(':event_id', $eventId, PDO::PARAM_INT);
+    $ticketStmt->execute();
+    $tickets = $ticketStmt->fetchAll(PDO::FETCH_ASSOC);
+    
     echo json_encode([
         'success' => true,
-        'event' => $event
+        'event' => $event,
+        'tickets' => $tickets
     ]);
     
 } catch (Exception $e) {

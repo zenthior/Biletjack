@@ -533,10 +533,21 @@ sort($cities);
 
         <!-- Etkinlikler Grid -->
         <?php if (count($filteredEvents) > 0): ?>
+        <?php 
+            // Giriş yapan müşterinin favorilerini al
+            $favoriteEventIds = [];
+            if (function_exists('isLoggedIn') && isLoggedIn() && isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'customer') {
+                $stmtFav = $pdo->prepare("SELECT event_id FROM favorites WHERE user_id = ?");
+                $stmtFav->execute([$_SESSION['user_id']]);
+                $favoriteEventIds = array_column($stmtFav->fetchAll(PDO::FETCH_ASSOC), 'event_id');
+                $favoriteEventIds = array_fill_keys($favoriteEventIds, true);
+            }
+        ?>
         <div class="events-grid">
             <?php foreach ($filteredEvents as $event): 
                 // Minimum fiyatı al
                 $minPrice = $event['min_price'];
+                $isFav = isset($favoriteEventIds[$event['id']]);
                 
                 // Kategori adını bul
                 $categoryName = '';
@@ -547,17 +558,26 @@ sort($cities);
                     }
                 }
             ?>
-            <div class="event-card" onclick="window.location.href='etkinlik-detay.php?id=<?php echo $event['id']; ?>'">
+            <div class="event-card" onclick="if (event && event.target && event.target.closest && event.target.closest('.favorite-btn')) return; window.location.href='etkinlik-detay.php?id=<?php echo $event['id']; ?>'">
                 <div class="event-image" style="background: <?php echo !empty($event['image_url']) ? 'url(' . htmlspecialchars($event['image_url']) . ') center/cover' : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'; ?>">
+                    <button class="favorite-btn pos-bottom-right<?php echo $isFav ? ' active' : ''; ?>" aria-label="Favorilere ekle" aria-pressed="<?php echo $isFav ? 'true' : 'false'; ?>" data-event-id="<?php echo $event['id']; ?>">
+                        <?php echo file_get_contents(__DIR__ . '/SVG/favorites.svg'); ?>
+                    </button>
                     <div class="event-category"><?php echo htmlspecialchars($categoryName); ?></div>
                     <div class="event-location"><?php echo isset($event['city']) ? htmlspecialchars($event['city']) : 'Konum Belirtilmemiş'; ?></div>
                 </div>
                 <div class="event-content">
                     <h3 class="event-title"><?php echo htmlspecialchars($event['title']); ?></h3>
                     <p class="event-venue"><?php echo isset($event['venue_name']) ? htmlspecialchars($event['venue_name']) : 'Mekan Belirtilmemiş'; ?></p>
-                    <p class="event-date"><?php echo date('d M Y', strtotime($event['event_date'])) . ' - ' . date('H:i', strtotime($event['event_date'])); ?></p>
+                    <p class="event-date"><?php 
+                        $months = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+                        $date = new DateTime($event['event_date']);
+                        echo $date->format('d') . ' ' . $months[$date->format('n') - 1] . ' ' . $date->format('Y') . ' - ' . $date->format('H:i');
+                    ?></p>
                     <div class="event-footer">
-                        <?php if ($minPrice && $minPrice > 0): ?>
+                        <?php if ($event['seating_type'] === 'reservation'): ?>
+                            <span class="event-price reservation-label">Rezervasyonlu</span>
+                        <?php elseif ($minPrice && $minPrice > 0): ?>
                             <span class="event-price"><?php echo number_format($minPrice, 0, ',', '.'); ?>₺</span>
                         <?php else: ?>
                             <span class="event-price">Ücretsiz</span>

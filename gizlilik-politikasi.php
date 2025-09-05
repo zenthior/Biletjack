@@ -12,33 +12,6 @@
             </div>
         </div>
 
-        <div class="privacy-navigation">
-            <div class="nav-item" data-section="genel">
-                <i class="fas fa-info-circle"></i>
-                <span>Genel Bilgiler</span>
-            </div>
-            <div class="nav-item" data-section="toplama">
-                <i class="fas fa-database"></i>
-                <span>Veri Toplama</span>
-            </div>
-            <div class="nav-item" data-section="kullanim">
-                <i class="fas fa-cogs"></i>
-                <span>Veri Kullanımı</span>
-            </div>
-            <div class="nav-item" data-section="paylaşim">
-                <i class="fas fa-share-alt"></i>
-                <span>Veri Paylaşımı</span>
-            </div>
-            <div class="nav-item" data-section="guvenlik">
-                <i class="fas fa-lock"></i>
-                <span>Güvenlik</span>
-            </div>
-            <div class="nav-item" data-section="haklar">
-                <i class="fas fa-user-shield"></i>
-                <span>Haklarınız</span>
-            </div>
-        </div>
-
         <div class="content-section" id="genel">
             <h2><i class="fas fa-info-circle"></i> Genel Bilgiler</h2>
             <div class="privacy-content">
@@ -53,10 +26,10 @@
                 
                 <div class="info-card">
                     <h4>İletişim Bilgileri</h4>
-                    <p><strong>Şirket:</strong> BiletJack Teknoloji A.Ş.</p>
-                    <p><strong>Adres:</strong> Maslak Mahallesi, Teknoloji Caddesi No:1, Sarıyer/İstanbul</p>
-                    <p><strong>E-posta:</strong> kvkk@biletjack.com</p>
-                    <p><strong>Telefon:</strong> +90 212 123 45 67</p>
+                    <p><strong>Şirket:</strong> BiletJack </p>
+                    <p><strong>Adres:</strong> Söğütlü mahallesi ortaalan caddesi kardelen sitesi c blok, Akçaabat/Trabzon</p>
+                    <p><strong>E-posta:</strong> destek@biletjack.com</p>
+                    <p><strong>Telefon:</strong> +90 545 613 42 61</p>
                 </div>
                 
                 <h3>1.2 Politikanın Kapsamı</h3>
@@ -283,19 +256,19 @@
                     <div class="contact-method">
                         <i class="fas fa-envelope"></i>
                         <h4>E-posta</h4>
-                        <p>kvkk@biletjack.com</p>
+                        <p>destek@biletjack.com</p>
                     </div>
                     
                     <div class="contact-method">
                         <i class="fas fa-phone"></i>
                         <h4>Telefon</h4>
-                        <p>+90 212 123 45 67</p>
+                        <p>+90 545 613 42 61</p>
                     </div>
                     
                     <div class="contact-method">
                         <i class="fas fa-mail-bulk"></i>
                         <h4>Posta</h4>
-                        <p>Maslak Mah. Teknoloji Cad. No:1<br>Sarıyer/İstanbul</p>
+                        <p>Söğütlü mahallesi ortaalan caddesi kardelen sitesi c blok<br>Akçaabat/Trabzon</p>
                     </div>
                 </div>
                 
@@ -343,17 +316,7 @@
             </div>
         </div>
 
-        <div class="consent-section">
-            <div class="consent-box">
-                <i class="fas fa-shield-check"></i>
-                <h3>Gizlilik Politikasını Kabul Ediyorum</h3>
-                <p>Kişisel verilerimin bu politika kapsamında işlenmesini kabul ediyorum.</p>
-                <div class="consent-buttons">
-                    <button class="accept-btn" onclick="acceptPrivacy()">Kabul Ediyorum</button>
-                    <button class="decline-btn" onclick="declinePrivacy()">Kabul Etmiyorum</button>
-                </div>
-            </div>
-        </div>
+       
     </div>
 </main>
 

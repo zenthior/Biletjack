@@ -49,6 +49,13 @@ function isCustomer() {
 }
 
 /**
+ * Hizmet sağlayıcı kontrolü (basit)
+ */
+function isServiceProvider() {
+    return hasRole('service_provider');
+}
+
+/**
  * Organizatör onay durumunu kontrol et
  */
 function isOrganizerApproved() {
@@ -107,7 +114,7 @@ function startUserSession($user) {
  */
 function requireAdmin() {
     if (!hasRole('admin')) {
-        header('Location: /Biletjack/index.php');
+        header('Location: /index.php');
         exit();
     }
 }
@@ -117,7 +124,7 @@ function requireAdmin() {
  */
 function requireOrganizer() {
     if (!hasRole('organizer')) {
-        header('Location: /Biletjack/index.php');
+        header('Location: /index.php');
         exit();
     }
     
@@ -128,15 +135,15 @@ function requireOrganizer() {
     $user = $stmt->fetch();
     
     if ($user['status'] === 'pending') {
-        header('Location: /Biletjack/organizer/pending.php');
+        header('Location: /organizer/pending.php');
         exit();
     } elseif ($user['status'] === 'rejected') {
         session_destroy();
-        header('Location: /Biletjack/index.php?error=account_rejected');
+        header('Location: /index.php?error=account_rejected');
         exit();
     } elseif ($user['status'] === 'suspended') {
         session_destroy();
-        header('Location: /Biletjack/index.php?error=account_suspended');
+        header('Location: /index.php?error=account_suspended');
         exit();
     }
 }
@@ -146,7 +153,17 @@ function requireOrganizer() {
  */
 function requireCustomer() {
     if (!hasRole('customer')) {
-        header('Location: /Biletjack/index.php');
+        header('Location: /index.php');
+        exit();
+    }
+}
+
+/**
+ * Hizmet sağlayıcı kontrolü
+ */
+function requireServiceProvider() {
+    if (!hasRole('service_provider')) {
+        header('Location: /index.php');
         exit();
     }
 }
@@ -157,7 +174,7 @@ function requireCustomer() {
 function redirectIfLoggedIn() {
     if (isLoggedIn()) {
         // Tüm kullanıcı türleri için ana sayfaya yönlendir
-        header('Location: /Biletjack/index.php');
+        header('Location: /index.php');
         exit();
     }
 }
@@ -187,37 +204,57 @@ function clearUserSession() {
 /**
  * Kullanıcıyı rolüne göre yönlendir
  */
+// Service provider kontrolü
+function isService() {
+    return isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'service';
+}
+
+// Service provider yetkisi gerektir
+function requireService() {
+    if (!isLoggedIn() || !isService()) {
+        header('Location: /auth/login.php');
+        exit();
+    }
+}
+
+// Reklam Ajansı kontrolü
+function isAdAgency() {
+    return isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'ad_agency';
+}
+
+// Reklam Ajansı yetkisi gerektir
+function requireAdAgency() {
+    if (!isLoggedIn() || !isAdAgency()) {
+        header('Location: /auth/login.php');
+        exit();
+    }
+}
+
 function redirectToDashboard() {
     if (!isLoggedIn()) {
-        header('Location: /Biletjack/index.php');
+        header('Location: /auth/login.php');
         exit();
     }
     
-    switch ($_SESSION['user_type']) {
+    $userType = $_SESSION['user_type'];
+    
+    switch ($userType) {
         case 'admin':
-            header('Location: /Biletjack/admin/index.php');
+            header('Location: /admin/index.php');
             break;
         case 'organizer':
-            // Organizatör durumunu kontrol et
-            global $pdo;
-            $stmt = $pdo->prepare("SELECT status FROM users WHERE id = ?");
-            $stmt->execute([$_SESSION['user_id']]);
-            $user = $stmt->fetch();
-            
-            if ($user['status'] === 'pending') {
-                header('Location: /Biletjack/organizer/pending.php');
-            } elseif ($user['status'] === 'approved') {
-                header('Location: /Biletjack/organizer/index.php');
-            } else {
-                session_destroy();
-                header('Location: /Biletjack/index.php?error=account_issue');
-            }
+            header('Location: /organizer/index.php');
+            break;
+        case 'service':
+            header('Location: /service_provider/index.php');
+            break;
+        case 'ad_agency':
+            header('Location: /ad_agency/index.php');
             break;
         case 'customer':
-            header('Location: /Biletjack/customer/index.php');
-            break;
         default:
-            header('Location: /Biletjack/index.php');
+            header('Location: /customer/index.php');
+            break;
     }
     exit();
 }
@@ -237,6 +274,9 @@ function checkPageAccess($requiredRole = null) {
             case 'customer':
                 requireCustomer();
                 break;
+            case 'ad_agency':
+                requireAdAgency();
+                break;
         }
     }
 }
@@ -245,10 +285,12 @@ function checkPageAccess($requiredRole = null) {
  * Güvenli çıkış
  */
 function logout() {
-    session_start();
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
     session_unset();
     session_destroy();
-    header('Location: /Biletjack/index.php?message=logged_out');
+    header('Location: /index.php?message=logged_out');
     exit();
 }
 ?>

@@ -82,6 +82,7 @@ include 'includes/header.php';
             </div>
             <div class="user-info">
                 <h3 class="user-name"><?php echo htmlspecialchars($user['first_name'] . ' ' . $user['last_name']); ?></h3>
+                <p class="user-id">Kullanıcı ID: #<?php echo $user_id; ?></p>
             </div>
         </div>
     </div>

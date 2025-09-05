@@ -4,10 +4,10 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// Hata raporlamayı aç (geçici)
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+// Hata raporlamayı kapat (JSON response için)
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
+error_reporting(0);
 
 require_once '../includes/session.php';
 require_once '../config/database.php';
@@ -39,29 +39,21 @@ if (empty($email) || empty($password)) {
 }
 
 try {
-    // Debug: Gelen verileri logla
-    error_log('Login attempt - Email: ' . $email . ', Password length: ' . strlen($password));
-    
-    // User nesnesini oluşturmayı test et
     $user = new User($pdo);
-    
-    // Debug: Veritabanından kullanıcıyı kontrol et
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
-    $stmt->execute([$email]);
-    $dbUser = $stmt->fetch();
-    
-    if ($dbUser) {
-        error_log('User found in DB: ' . print_r($dbUser, true));
-        error_log('Password verify result: ' . (password_verify($password, $dbUser['password']) ? 'SUCCESS' : 'FAIL'));
-    } else {
-        error_log('User not found in database');
-    }
-    
-    // Login metodunu çağırmayı test et
     $loginResult = $user->login($email, $password);
     
     if ($loginResult['success']) {
         $userData = $loginResult['user'];
+        
+        // E-posta doğrulama kontrolü (sadece müşteriler için)
+        if (!$userData['email_verified'] && $userData['user_type'] === 'customer') {
+            echo json_encode([
+                'success' => false, 
+                'message' => 'E-posta adresinizi doğrulamanız gerekmektedir. Lütfen e-posta kutunuzu kontrol edin.',
+                'type' => 'email_not_verified'
+            ]);
+            exit();
+        }
         
         // Hesap durumu kontrolü
         if ($userData['status'] === 'suspended') {
@@ -80,11 +72,17 @@ try {
             exit();
         }
         
+        if ($userData['status'] === 'pending' && $userData['user_type'] === 'customer') {
+            echo json_encode([
+                'success' => false, 
+                'message' => 'Hesabınız henüz aktifleştirilmemiş. Lütfen e-posta adresinizi doğrulayın.',
+                'type' => 'account_pending'
+            ]);
+            exit();
+        }
+        
         // Session'ı ayarla
         setUserSession($userData);
-        
-        // Debug: Session verilerini kontrol et
-        error_log('Session ayarlandı: ' . print_r($_SESSION, true));
         
         // Remember me özelliği
         if ($remember) {
@@ -102,8 +100,7 @@ try {
         echo json_encode([
             'success' => true, 
             'message' => 'Giriş başarılı! Yönlendiriliyorsunuz...',
-            'redirect' => '/Biletjack/index.php', // Ana sayfaya yönlendir
-            'debug_session' => $_SESSION // Debug için session verilerini gönder
+            'redirect' => '/index.php'
         ]);
         
     } else {

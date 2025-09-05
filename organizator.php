@@ -114,6 +114,24 @@
                             <input type="tel" id="org_phone" name="phone" required>
                         </div>
                     </div>
+
+                    <!-- Şifre alanları eklendi -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="org_password">Şifre *</label>
+                            <input type="password" id="org_password" name="password" required class="pw-meter" data-require-strength="medium" data-confirm="#org_confirm_password">
+                            <div class="pw-strength" style="margin-top:6px;">
+                                <div class="pw-bar" style="height:6px;width:0%;background:#ddd;border-radius:4px;transition:width .2s ease;"></div>
+                                <div class="pw-text" style="margin-top:6px;font-size:12px;color:#666;">Şifre gücü: - (En az orta seviye gerekir. 8+ karakter, en az iki tür: küçük/büyük/rakam)</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="org_confirm_password">Şifre (Tekrar) *</label>
+                            <input type="password" id="org_confirm_password" name="confirm_password" required>
+                        </div>
+                    </div>
+                    <!-- Şifre alanları sonu -->
+
                     <div class="form-group">
                         <label for="org_address">Adres</label>
                         <textarea id="org_address" name="address" rows="3"></textarea>
@@ -469,6 +487,11 @@ document.getElementById('organizerForm').addEventListener('submit', function(e) 
         submitBtn.disabled = false;
     });
 });
+
+// Şifre gücü barını başlat (global fonksiyon varsa)
+if (window.BJ_InitPwMeters) {
+    BJ_InitPwMeters(document);
+}
 </script>
 
 <?php include 'includes/footer.php'; ?>

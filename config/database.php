@@ -30,4 +30,3 @@ if (!isset($pdo)) {
     $database = new Database();
     $pdo = $database->getConnection();
 }
-?>

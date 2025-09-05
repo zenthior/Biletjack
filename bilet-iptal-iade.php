@@ -97,10 +97,7 @@ include 'includes/header.php';
                         <strong>📧 E-posta:</strong> destek@biletjack.com
                     </div>
                     <div class="contact-item">
-                        <strong>📱 Telefon:</strong> 0850 123 45 67
-                    </div>
-                    <div class="contact-item">
-                        <strong>🕐 Çalışma Saatleri:</strong> Pazartesi-Pazar 09:00-22:00
+                        <strong>📱 Telefon:</strong> +90 545 613 42 61
                     </div>
                 </div>
             </div>
@@ -150,6 +147,7 @@ include 'includes/header.php';
 .info-card {
     background: white;
     padding: 30px;
+    color: black;
     border-radius: 15px;
     box-shadow: 0 5px 20px rgba(0,0,0,0.1);
     border-left: 5px solid #667eea;

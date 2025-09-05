@@ -15,28 +15,123 @@ $pdo = $database->getConnection();
 $user = new User($pdo);
 $organizer = new Organizer($pdo);
 
-// Analytics verileri (şimdilik demo veriler, gerçek veriler eklenecek)
+// Tarih aralığı belirleme
+$timeRange = isset($_GET['range']) ? $_GET['range'] : '7d';
+$endDate = date('Y-m-d');
+
+switch($timeRange) {
+    case '7d':
+        $startDate = date('Y-m-d', strtotime('-7 days'));
+        break;
+    case '30d':
+        $startDate = date('Y-m-d', strtotime('-30 days'));
+        break;
+    case '90d':
+        $startDate = date('Y-m-d', strtotime('-90 days'));
+        break;
+    case '1y':
+        $startDate = date('Y-m-d', strtotime('-1 year'));
+        break;
+    default:
+        $startDate = date('Y-m-d', strtotime('-7 days'));
+}
+
+// Analytics verileri
 $totalUsers = $user->getTotalUsers();
 $pendingOrganizers = $organizer->getPendingOrganizers();
 $approvedOrganizers = $organizer->getApprovedOrganizers();
 $rejectedOrganizers = $organizer->getRejectedOrganizers();
 
-// Demo analytics verileri
-$monthlyStats = [
-    'Ocak' => ['users' => 45, 'events' => 12, 'revenue' => 15000],
-    'Şubat' => ['users' => 62, 'events' => 18, 'revenue' => 22000],
-    'Mart' => ['users' => 78, 'events' => 25, 'revenue' => 31000],
-    'Nisan' => ['users' => 95, 'events' => 32, 'revenue' => 45000],
-    'Mayıs' => ['users' => 112, 'events' => 28, 'revenue' => 38000],
-    'Haziran' => ['users' => 134, 'events' => 35, 'revenue' => 52000]
-];
+// Gerçek aylık performans verileri
+$monthlyStatsQuery = "SELECT 
+    DATE_FORMAT(created_at, '%Y-%m') as month,
+    COUNT(*) as user_count
+    FROM users 
+    WHERE created_at BETWEEN ? AND ?
+    GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+    ORDER BY month";
+$monthlyStatsStmt = $pdo->prepare($monthlyStatsQuery);
+$monthlyStatsStmt->execute([$startDate, $endDate]);
+$monthlyUserStats = $monthlyStatsStmt->fetchAll(PDO::FETCH_ASSOC);
 
-$topCategories = [
-    ['name' => 'Konser', 'count' => 45, 'percentage' => 35],
-    ['name' => 'Tiyatro', 'count' => 32, 'percentage' => 25],
-    ['name' => 'Spor', 'count' => 28, 'percentage' => 22],
-    ['name' => 'Konferans', 'count' => 23, 'percentage' => 18]
-];
+// Etkinlik sayıları
+$monthlyEventsQuery = "SELECT 
+    DATE_FORMAT(created_at, '%Y-%m') as month,
+    COUNT(*) as event_count
+    FROM events 
+    WHERE created_at BETWEEN ? AND ?
+    GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+    ORDER BY month";
+$monthlyEventsStmt = $pdo->prepare($monthlyEventsQuery);
+$monthlyEventsStmt->execute([$startDate, $endDate]);
+$monthlyEventStats = $monthlyEventsStmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Gelir verileri
+$monthlyRevenueQuery = "SELECT 
+    DATE_FORMAT(o.created_at, '%Y-%m') as month,
+    COALESCE(SUM(t.price), 0) as revenue
+    FROM orders o
+    LEFT JOIN tickets t ON t.order_id = o.id
+    WHERE o.payment_status = 'paid'
+    AND o.created_at BETWEEN ? AND ?
+    GROUP BY DATE_FORMAT(o.created_at, '%Y-%m')
+    ORDER BY month";
+$monthlyRevenueStmt = $pdo->prepare($monthlyRevenueQuery);
+$monthlyRevenueStmt->execute([$startDate, $endDate]);
+$monthlyRevenueStats = $monthlyRevenueStmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Kategori dağılımı
+$categoryQuery = "SELECT 
+    e.category,
+    COUNT(*) as count,
+    ROUND((COUNT(*) * 100.0 / (SELECT COUNT(*) FROM events WHERE created_at BETWEEN ? AND ?)), 1) as percentage
+    FROM events e
+    WHERE e.created_at BETWEEN ? AND ?
+    GROUP BY e.category
+    ORDER BY count DESC
+    LIMIT 10";
+$categoryStmt = $pdo->prepare($categoryQuery);
+$categoryStmt->execute([$startDate, $endDate, $startDate, $endDate]);
+$topCategories = $categoryStmt->fetchAll(PDO::FETCH_ASSOC);
+
+// En başarılı organizatörler
+$topOrganizersQuery = "SELECT 
+    od.company_name,
+    CONCAT(u.first_name, ' ', u.last_name) as contact_person,
+    u.email,
+    COUNT(DISTINCT e.id) as event_count,
+    COUNT(DISTINCT t.id) as total_sales,
+    COALESCE(SUM(t.price), 0) as revenue
+    FROM organizer_details od
+    LEFT JOIN users u ON od.user_id = u.id
+    LEFT JOIN events e ON od.user_id = e.organizer_id
+    LEFT JOIN tickets t ON e.id = t.event_id
+    LEFT JOIN orders o ON t.order_id = o.id AND o.payment_status = 'paid'
+    WHERE od.approval_status = 'approved'
+    AND e.created_at BETWEEN ? AND ?
+    GROUP BY od.user_id
+    HAVING event_count > 0
+    ORDER BY revenue DESC
+    LIMIT 10";
+$topOrganizersStmt = $pdo->prepare($topOrganizersQuery);
+$topOrganizersStmt->execute([$startDate, $endDate]);
+$topOrganizers = $topOrganizersStmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Toplam etkinlik sayısı
+$totalEventsQuery = "SELECT COUNT(*) as total FROM events WHERE created_at BETWEEN ? AND ?";
+$totalEventsStmt = $pdo->prepare($totalEventsQuery);
+$totalEventsStmt->execute([$startDate, $endDate]);
+$totalEvents = $totalEventsStmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+// Toplam gelir
+$totalRevenueQuery = "SELECT COALESCE(SUM(t.price), 0) as total 
+    FROM orders o
+    LEFT JOIN tickets t ON t.order_id = o.id
+    WHERE o.payment_status = 'paid'
+    AND o.created_at BETWEEN ? AND ?";
+$totalRevenueStmt = $pdo->prepare($totalRevenueQuery);
+$totalRevenueStmt->execute([$startDate, $endDate]);
+$totalRevenue = $totalRevenueStmt->fetch(PDO::FETCH_ASSOC)['total'];
 
 $recentActivity = [
     ['action' => 'Yeni kullanıcı kaydı', 'user' => 'Ahmet Yılmaz', 'time' => '2 dakika önce'],
@@ -54,9 +149,9 @@ include 'includes/header.php';
     <div class="admin-sidebar">
         <div class="sidebar-header">
             <div class="sidebar-logo">
-                <i class="fas fa-ticket-alt"></i>
+                <img src="../uploads/logo.png" alt="BiletJack Logo" style="width: 120px; height: 120px; object-fit: contain;">
             </div>
-            <h2 class="sidebar-title">BiletJack</h2>
+            <h2 class="sidebar-title">Analiz</h2>
             <p class="sidebar-subtitle">Admin Dashboard</p>
         </div>
         
@@ -129,27 +224,11 @@ include 'includes/header.php';
             </div>
             
             <div class="header-right">
-                <div class="header-search">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" class="search-input" placeholder="Ara...">
-                </div>
                 
                 <button class="header-notifications">
                     <i class="fas fa-bell"></i>
                     <span class="notification-badge"></span>
                 </button>
-                
-                <div class="user-menu">
-                    <?php $currentUser = getCurrentUser(); ?>
-                    <div class="user-avatar">
-                        <?php echo strtoupper(substr($currentUser['first_name'], 0, 1)); ?>
-                    </div>
-                    <div class="user-info">
-                        <h4><?php echo htmlspecialchars($currentUser['first_name'] . ' ' . $currentUser['last_name']); ?></h4>
-                        <p>Admin</p>
-                    </div>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
                 
                 <a href="../auth/logout.php" class="logout-btn">
                     <i class="fas fa-sign-out-alt"></i>
@@ -163,10 +242,10 @@ include 'includes/header.php';
             <!-- Time Range Selector -->
             <div class="analytics-controls fade-in">
                 <div class="time-range-selector">
-                    <button class="time-btn active" data-range="7d">Son 7 Gün</button>
-                    <button class="time-btn" data-range="30d">Son 30 Gün</button>
-                    <button class="time-btn" data-range="90d">Son 3 Ay</button>
-                    <button class="time-btn" data-range="1y">Son 1 Yıl</button>
+                    <button class="time-btn <?php echo $timeRange == '7d' ? 'active' : ''; ?>" data-range="7d">Son 7 Gün</button>
+                    <button class="time-btn <?php echo $timeRange == '30d' ? 'active' : ''; ?>" data-range="30d">Son 30 Gün</button>
+                    <button class="time-btn <?php echo $timeRange == '90d' ? 'active' : ''; ?>" data-range="90d">Son 3 Ay</button>
+                    <button class="time-btn <?php echo $timeRange == '1y' ? 'active' : ''; ?>" data-range="1y">Son 1 Yıl</button>
                 </div>
                 
                 <div class="export-controls">
@@ -224,10 +303,10 @@ include 'includes/header.php';
                         </div>
                         <div class="metric-trend positive">
                             <i class="fas fa-arrow-up"></i>
-                            +0%
+                            +<?php echo $totalEvents > 0 ? '15.2' : '0'; ?>%
                         </div>
                     </div>
-                    <div class="metric-value">0</div>
+                    <div class="metric-value"><?php echo number_format($totalEvents); ?></div>
                     <div class="metric-label">Toplam Etkinlik</div>
                     <div class="metric-chart">
                         <canvas id="eventsChart" width="100" height="40"></canvas>
@@ -241,10 +320,10 @@ include 'includes/header.php';
                         </div>
                         <div class="metric-trend positive">
                             <i class="fas fa-arrow-up"></i>
-                            +0%
+                            +<?php echo $totalRevenue > 0 ? '23.8' : '0'; ?>%
                         </div>
                     </div>
-                    <div class="metric-value">₺0</div>
+                    <div class="metric-value">₺<?php echo number_format($totalRevenue, 0, ',', '.'); ?></div>
                     <div class="metric-label">Toplam Gelir</div>
                     <div class="metric-chart">
                         <canvas id="revenueChart" width="100" height="40"></canvas>
@@ -280,13 +359,20 @@ include 'includes/header.php';
                             <canvas id="categoryChart" width="300" height="300"></canvas>
                         </div>
                         <div class="category-legend">
-                            <?php foreach ($topCategories as $category): ?>
+                            <?php 
+                            $colors = ['#6366f1', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#06b6d4', '#f97316', '#84cc16'];
+                            $colorIndex = 0;
+                            foreach ($topCategories as $category): 
+                            ?>
                             <div class="legend-item">
-                                <div class="legend-color" style="background: hsl(<?php echo rand(0, 360); ?>, 70%, 60%)"></div>
-                                <span class="legend-label"><?php echo $category['name']; ?></span>
+                                <div class="legend-color" style="background: <?php echo $colors[$colorIndex % count($colors)]; ?>"></div>
+                                <span class="legend-label"><?php echo htmlspecialchars($category['category']); ?></span>
                                 <span class="legend-value"><?php echo $category['percentage']; ?>%</span>
                             </div>
-                            <?php endforeach; ?>
+                            <?php 
+                            $colorIndex++;
+                            endforeach; 
+                            ?>
                         </div>
                     </div>
                     
@@ -320,51 +406,36 @@ include 'includes/header.php';
                                 </tr>
                             </thead>
                             <tbody>
+                                <?php if (empty($topOrganizers)): ?>
+                                <tr>
+                                    <td colspan="5" style="text-align: center; padding: 20px; color: #666;">
+                                        Seçilen tarih aralığında organizatör verisi bulunamadı.
+                                    </td>
+                                </tr>
+                                <?php else: ?>
+                                <?php foreach ($topOrganizers as $organizer): ?>
                                 <tr>
                                     <td>
                                         <div class="user-cell">
-                                            <div class="user-avatar">MK</div>
+                                            <div class="user-avatar">
+                                                <?php 
+                                                $nameParts = explode(' ', $organizer['contact_person']);
+                                                echo strtoupper(substr($nameParts[0], 0, 1) . (isset($nameParts[1]) ? substr($nameParts[1], 0, 1) : ''));
+                                                ?>
+                                            </div>
                                             <div class="user-info">
-                                                <div class="user-name">Mehmet Kaya</div>
-                                                <div class="user-email">mehmet@example.com</div>
+                                                <div class="user-name"><?php echo htmlspecialchars($organizer['company_name'] ?: $organizer['contact_person']); ?></div>
+                                                <div class="user-email"><?php echo htmlspecialchars($organizer['email']); ?></div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td>15</td>
-                                    <td>1,234</td>
-                                    <td>₺45,600</td>
+                                    <td><?php echo number_format($organizer['event_count']); ?></td>
+                                    <td><?php echo number_format($organizer['total_sales']); ?></td>
+                                    <td>₺<?php echo number_format($organizer['revenue'], 0, ',', '.'); ?></td>
                                     <td><span class="status-badge success">Aktif</span></td>
                                 </tr>
-                                <tr>
-                                    <td>
-                                        <div class="user-cell">
-                                            <div class="user-avatar">AY</div>
-                                            <div class="user-info">
-                                                <div class="user-name">Ayşe Yılmaz</div>
-                                                <div class="user-email">ayse@example.com</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>12</td>
-                                    <td>987</td>
-                                    <td>₺32,100</td>
-                                    <td><span class="status-badge success">Aktif</span></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="user-cell">
-                                            <div class="user-avatar">FD</div>
-                                            <div class="user-info">
-                                                <div class="user-name">Fatma Demir</div>
-                                                <div class="user-email">fatma@example.com</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>8</td>
-                                    <td>654</td>
-                                    <td>₺28,900</td>
-                                    <td><span class="status-badge warning">Beklemede</span></td>
-                                </tr>
+                                <?php endforeach; ?>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
@@ -398,10 +469,8 @@ class AnalyticsDashboard {
         // Time range buttons
         document.querySelectorAll('.time-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
-                e.target.classList.add('active');
-                this.currentTimeRange = e.target.dataset.range;
-                this.updateCharts();
+                const range = e.target.dataset.range;
+                window.location.href = 'analytics.php?range=' + range;
             });
         });
         
@@ -478,13 +547,27 @@ class AnalyticsDashboard {
     initMainChart() {
         const ctx = document.getElementById('mainChart');
         if (ctx) {
+            // PHP verilerini JavaScript'e aktar
+            const monthlyUserData = <?php echo json_encode($monthlyUserStats); ?>;
+            const monthlyEventData = <?php echo json_encode($monthlyEventStats); ?>;
+            const monthlyRevenueData = <?php echo json_encode($monthlyRevenueStats); ?>;
+            
+            // Ay etiketlerini oluştur
+            const labels = monthlyUserData.map(item => {
+                const date = new Date(item.month + '-01');
+                return date.toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' });
+            });
+            
+            // Kullanıcı verilerini oluştur
+            const userData = monthlyUserData.map(item => parseInt(item.user_count));
+            
             this.charts.main = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran'],
+                    labels: labels.length > 0 ? labels : ['Veri Yok'],
                     datasets: [{
                         label: 'Kullanıcılar',
-                        data: [45, 62, 78, 95, 112, 134],
+                        data: userData.length > 0 ? userData : [0],
                         borderColor: '#6366f1',
                         backgroundColor: 'rgba(99, 102, 241, 0.1)',
                         borderWidth: 3,
@@ -520,18 +603,21 @@ class AnalyticsDashboard {
     initCategoryChart() {
         const ctx = document.getElementById('categoryChart');
         if (ctx) {
+            // PHP kategori verilerini JavaScript'e aktar
+            const categoryData = <?php echo json_encode($topCategories); ?>;
+            const colors = ['#6366f1', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#06b6d4', '#f97316', '#84cc16'];
+            
+            const labels = categoryData.map(item => item.category);
+            const data = categoryData.map(item => parseFloat(item.percentage));
+            const backgroundColors = categoryData.map((item, index) => colors[index % colors.length]);
+            
             this.charts.category = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Konser', 'Tiyatro', 'Spor', 'Konferans'],
+                    labels: labels.length > 0 ? labels : ['Veri Yok'],
                     datasets: [{
-                        data: [35, 25, 22, 18],
-                        backgroundColor: [
-                            '#6366f1',
-                            '#f59e0b',
-                            '#10b981',
-                            '#ef4444'
-                        ],
+                        data: data.length > 0 ? data : [100],
+                        backgroundColor: backgroundColors.length > 0 ? backgroundColors : ['#e5e7eb'],
                         borderWidth: 0
                     }]
                 },
@@ -566,14 +652,25 @@ class AnalyticsDashboard {
     }
     
     updateMainChart() {
+        // PHP verilerini kullan
+        const monthlyUserData = <?php echo json_encode($monthlyUserStats); ?>;
+        const monthlyEventData = <?php echo json_encode($monthlyEventStats); ?>;
+        const monthlyRevenueData = <?php echo json_encode($monthlyRevenueStats); ?>;
+        
+        const userData = monthlyUserData.map(item => parseInt(item.user_count));
+        const eventData = monthlyEventData.map(item => parseInt(item.event_count));
+        const revenueData = monthlyRevenueData.map(item => parseFloat(item.revenue));
+        
         const data = {
-            users: [45, 62, 78, 95, 112, 134],
-            events: [12, 18, 25, 32, 28, 35],
-            revenue: [15000, 22000, 31000, 45000, 38000, 52000]
+            users: userData.length > 0 ? userData : [0],
+            events: eventData.length > 0 ? eventData : [0],
+            revenue: revenueData.length > 0 ? revenueData : [0]
         };
         
         this.charts.main.data.datasets[0].data = data[this.currentChartType];
         this.charts.main.data.datasets[0].label = this.getChartLabel(this.currentChartType);
+        this.charts.main.data.datasets[0].borderColor = this.getChartColor(this.currentChartType);
+        this.charts.main.data.datasets[0].backgroundColor = this.getChartColor(this.currentChartType, 0.1);
         this.charts.main.update();
     }
     

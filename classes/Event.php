@@ -210,15 +210,16 @@ class Event {
     
     // Öne çıkan etkinlikleri getir
     public function getFeaturedEvents($limit = 6) {
+        $limit = (int) $limit; // Integer'a çevir
         $query = "SELECT e.*, c.name as category_name 
                  FROM " . $this->table_name . " e
                  LEFT JOIN categories c ON e.category_id = c.id
                  WHERE e.status = 'published' AND e.is_featured = 1 AND e.event_date >= CURDATE()
                  ORDER BY e.event_date ASC
-                 LIMIT ?";
+                 LIMIT " . $limit;
         
         $stmt = $this->conn->prepare($query);
-        $stmt->execute([$limit]);
+        $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

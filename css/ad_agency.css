@@ -1,0 +1,257 @@
+/* Reklam Ajansı Paneli - Mobil Uyumlu CSS */
+
+/* Kök panel kapsayıcı */
+.aa-panel {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+    color: #111;
+}
+
+/* Bölüm başlıkları */
+.aa-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: #111827;
+}
+
+.aa-subtitle {
+    font-size: 14px;
+    color: #6B7280;
+    margin-bottom: 24px;
+}
+
+/* Grid düzeni */
+.aa-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+}
+
+/* Kart bileşeni */
+.aa-card {
+    background: #ffffff;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+}
+
+.aa-card .aa-card-title {
+    font-weight: 700;
+    font-size: 16px;
+    color: #111827;
+    margin-bottom: 8px;
+}
+
+.aa-card .aa-card-desc {
+    font-size: 13px;
+    color: #6B7280;
+}
+
+/* Butonlar */
+.aa-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 16px 0;
+}
+
+.aa-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    background: #111827;
+    color: #fff;
+    transition: all .2s ease;
+    text-decoration: none;
+}
+
+.aa-btn:hover {
+    transform: translateY(-1px);
+    background: #0B1220;
+}
+
+.aa-btn.secondary {
+    background: #fff;
+    border-color: #E5E7EB;
+    color: #111827;
+}
+
+.aa-btn.secondary:hover {
+    background: #F9FAFB;
+}
+
+/* Tablo (yatay kaydırma ile mobil uyum) */
+.aa-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    background: #fff;
+}
+
+.aa-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 640px; /* mobilde kaydırma */
+}
+
+.aa-table th, .aa-table td {
+    padding: 12px 14px;
+    text-align: left;
+    border-bottom: 1px solid #F3F4F6;
+    font-size: 14px;
+    color: #111827;
+    white-space: nowrap;
+}
+
+.aa-table th {
+    background: #F9FAFB;
+    font-weight: 700;
+}
+
+/* Formlar */
+.aa-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.aa-form .aa-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.aa-form label {
+    font-size: 13px;
+    color: #374151;
+    font-weight: 600;
+}
+
+.aa-form input,
+.aa-form select,
+.aa-form textarea {
+    padding: 10px 12px;
+    border: 1px solid #E5E7EB;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #111827;
+    outline: none;
+    background: #fff;
+}
+
+.aa-form textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* Bilgi/kutu uyarıları */
+.aa-alert {
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    margin: 12px 0;
+    border: 1px solid transparent;
+}
+
+.aa-alert.info {
+    background: #EFF6FF;
+    color: #1D4ED8;
+    border-color: #BFDBFE;
+}
+
+.aa-alert.success {
+    background: #ECFDF5;
+    color: #059669;
+    border-color: #A7F3D0;
+}
+
+.aa-alert.warning {
+    background: #FFFBEB;
+    color: #B45309;
+    border-color: #FDE68A;
+}
+
+.aa-alert.danger {
+    background: #FEF2F2;
+    color: #DC2626;
+    border-color: #FECACA;
+}
+
+/* Bölüm ayırıcı */
+.aa-section {
+    margin: 24px 0;
+}
+
+/* Küçük kart listeleri */
+.aa-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+}
+
+.aa-stat {
+    background: #ffffff;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 12px;
+}
+
+.aa-stat .aa-stat-label {
+    font-size: 12px;
+    color: #6B7280;
+}
+
+.aa-stat .aa-stat-value {
+    font-size: 20px;
+    font-weight: 800;
+    color: #111827;
+}
+
+/* Breakpoints */
+@media (max-width: 1024px) {
+    .aa-panel {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .aa-title {
+        font-size: 20px;
+    }
+    .aa-subtitle {
+        font-size: 13px;
+    }
+    .aa-form {
+        grid-template-columns: 1fr; /* tek sütun */
+    }
+    .aa-btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .aa-panel {
+        padding: 16px;
+    }
+    .aa-title {
+        font-size: 18px;
+    }
+    .aa-card {
+        padding: 14px;
+    }
+    .aa-table th, .aa-table td {
+        font-size: 13px;
+        padding: 10px 12px;
+    }
+}

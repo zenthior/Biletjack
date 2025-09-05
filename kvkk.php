@@ -456,11 +456,11 @@ include 'includes/header.php';
         <p>6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") uyarınca, kişisel verileriniz; veri sorumlusu olarak <strong>BiletJack</strong> tarafından aşağıda açıklanan kapsamda işlenebilecektir.</p>
         
         <div class="highlight-box">
-            <h4>📍 Şirket Bilgileri</h4>
-            <p><strong>Ünvan:</strong> BiletJack Teknoloji A.Ş.<br>
-            <strong>Adres:</strong> Teknoloji Geliştirme Bölgesi, İstanbul<br>
-            <strong>E-posta:</strong> kvkk@biletjack.com<br>
-            <strong>Telefon:</strong> +90 (212) 555 0123</p>
+            <h4>Şirket Bilgileri</h4>
+            <p><strong>Ünvan:</strong> BiletJack<br>
+            <strong>Adres:</strong> Söğütlü mahallesi ortaalan caddesi kardelen sitesi c blok, Akçaabat/Trabzon<br>
+            <strong>E-posta:</strong> destek@biletjack.com<br>
+            <strong>Telefon:</strong> +90 545 613 42 61</p>
         </div>
     </section>
 
@@ -585,30 +585,7 @@ include 'includes/header.php';
         </ul>
     </section>
 
-    <div class="contact-section" id="iletisim">
-        <i class="fas fa-envelope" style="font-size: 3rem; margin-bottom: 1rem;"></i>
-        <h3>KVKK Başvuru ve İletişim</h3>
-        <p>Kişisel veri işleme faaliyetlerimiz hakkında soru, görüş ve önerileriniz için bizimle iletişime geçebilirsiniz.</p>
-        
-        <div class="contact-buttons">
-            <a href="mailto:kvkk@biletjack.com" class="contact-btn primary">
-                <i class="fas fa-envelope"></i>
-                KVKK Başvurusu Yap
-            </a>
-            <a href="iletisim.php" class="contact-btn secondary">
-                <i class="fas fa-phone"></i>
-                İletişim Sayfası
-            </a>
-        </div>
-        
-        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.2);">
-            <p style="margin: 0; font-size: 0.9rem; opacity: 0.8;">
-                <strong>KVKK Başvuru Adresi:</strong> kvkk@biletjack.com<br>
-                <strong>Posta Adresi:</strong> BiletJack Teknoloji A.Ş., Teknoloji Geliştirme Bölgesi, İstanbul<br>
-                <strong>Son Güncelleme:</strong> <?php echo date('d.m.Y'); ?>
-            </p>
-        </div>
-    </div>
+    
 
     <div class="highlight-box">
         <h4>📋 Önemli Notlar</h4>
